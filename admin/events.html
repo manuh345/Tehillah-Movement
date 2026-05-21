@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Events — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .events-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:1.5rem; }
+    .event-admin-card {
+      background:var(--card-bg); border:1px solid var(--border); border-radius:8px;
+      overflow:hidden; transition:border-color 0.3s;
+    }
+    .event-admin-card:hover { border-color:rgba(201,168,76,0.35); }
+    .event-card-top {
+      padding:1.5rem; background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));
+      display:flex; justify-content:space-between; align-items:flex-start;
+    }
+    .event-date-badge { text-align:center; }
+    .event-date-month { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.15em; color:var(--gold); }
+    .event-date-num { font-family:'Cinzel',serif; font-size:2.5rem; line-height:1; color:var(--white); }
+    .event-card-body { padding:1.2rem 1.5rem; }
+    .event-admin-title { font-family:'Cinzel',serif; font-size:0.9rem; color:var(--white); margin-bottom:0.4rem; }
+    .event-admin-meta { font-size:0.78rem; color:var(--white-dim); display:flex; flex-direction:column; gap:0.25rem; margin-bottom:1rem; }
+    .event-admin-meta span { display:flex; align-items:center; gap:0.4rem; }
+    .event-card-footer { padding:0.8rem 1.5rem; border-top:1px solid var(--border); display:flex; gap:0.6rem; justify-content:flex-end; }
+    .reg-bar-row { display:flex; align-items:center; gap:0.8rem; margin-bottom:0.8rem; }
+    .reg-bar-label { font-size:0.72rem; color:var(--white-dim); min-width:90px; }
+    .reg-bar-count { font-size:0.72rem; color:var(--gold); font-family:'Cinzel',serif; white-space:nowrap; }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div><div class="admin-page-title">Events Manager</div><div class="breadcrumb"><a href="index.html">Dashboard</a> › Events</div></div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-gold btn-sm" onclick="openModal('newEventModal')">➕ Create Event</button>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- STATS ROW -->
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card"><div class="stat-card-accent"></div><div class="stat-label">Total Events</div><div class="stat-value" data-count="8">0</div><div class="stat-icon">📅</div></div>
+        <div class="stat-card"><div class="stat-card-accent green"></div><div class="stat-label">Active / Upcoming</div><div class="stat-value" data-count="5">0</div><div class="stat-icon">🟢</div></div>
+        <div class="stat-card"><div class="stat-card-accent blue"></div><div class="stat-label">Total Registrations</div><div class="stat-value" data-count="1284">0</div><div class="stat-icon">👥</div></div>
+        <div class="stat-card"><div class="stat-card-accent red"></div><div class="stat-label">Recurring (Weekly)</div><div class="stat-value" data-count="1">0</div><div class="stat-icon">🔁</div></div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab(this,'all')">All Events</button>
+        <button class="tab-btn" onclick="switchTab(this,'upcoming')">Upcoming</button>
+        <button class="tab-btn" onclick="switchTab(this,'recurring')">Recurring</button>
+        <button class="tab-btn" onclick="switchTab(this,'past')">Past</button>
+      </div>
+
+      <!-- EVENTS GRID -->
+      <div class="events-grid" id="eventsGrid">
+
+        <div class="event-admin-card">
+          <div class="event-card-top">
+            <div><span class="badge badge-gold" style="margin-bottom:0.5rem;">Featured</span><div style="font-family:'Cinzel',serif;font-size:0.6rem;color:var(--gold);letter-spacing:0.12em;">7 DAYS · 24/7</div></div>
+            <div class="event-date-badge"><div class="event-date-month">AUG</div><div class="event-date-num">14</div></div>
+          </div>
+          <div class="event-card-body">
+            <div class="event-admin-title">Glory Encounter 2025</div>
+            <div class="event-admin-meta">
+              <span>📍 Nairobi, Kenya</span>
+              <span>📅 Aug 14–20, 2025</span>
+              <span>🎟 Free · Session-based</span>
+            </div>
+            <div class="reg-bar-row"><span class="reg-bar-label">Registrations</span><div class="progress" style="flex:1"><div class="progress-bar" style="width:73%"></div></div><span class="reg-bar-count">584/800</span></div>
+          </div>
+          <div class="event-card-footer">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Opening event details…','success')">✏ Edit</button>
+            <button class="btn btn-success btn-sm" onclick="showToast('Notifications sent!','success')">📢 Notify</button>
+            <button class="btn btn-gold btn-sm" onclick="showToast('Opening registrations…','success')">👥 Regs</button>
+          </div>
+        </div>
+
+        <div class="event-admin-card">
+          <div class="event-card-top">
+            <div><span class="badge badge-green" style="margin-bottom:0.5rem;">Recurring</span><div style="font-family:'Cinzel',serif;font-size:0.6rem;color:var(--gold);letter-spacing:0.12em;">WEEKLY VIGIL</div></div>
+            <div class="event-date-badge"><div class="event-date-month">SAT</div><div class="event-date-num">07</div></div>
+          </div>
+          <div class="event-card-body">
+            <div class="event-admin-title">Adullam Saturday Night Vigil</div>
+            <div class="event-admin-meta">
+              <span>📍 Tehillah Sanctuary</span>
+              <span>📅 Every Saturday · 10 PM</span>
+              <span>🔁 Weekly recurring</span>
+            </div>
+            <div class="reg-bar-row"><span class="reg-bar-label">This Saturday</span><div class="progress" style="flex:1"><div class="progress-bar green" style="width:45%"></div></div><span class="reg-bar-count">32/70</span></div>
+          </div>
+          <div class="event-card-footer">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Editing Adullam…','success')">✏ Edit</button>
+            <button class="btn btn-success btn-sm" onclick="showToast('Notifications sent!','success')">📢 Notify</button>
+            <button class="btn btn-gold btn-sm" onclick="showToast('Opening registrations…','success')">👥 Regs</button>
+          </div>
+        </div>
+
+        <div class="event-admin-card">
+          <div class="event-card-top">
+            <div><span class="badge badge-blue" style="margin-bottom:0.5rem;">Conference</span><div style="font-family:'Cinzel',serif;font-size:0.6rem;color:var(--gold);letter-spacing:0.12em;">GLOBAL · 7 DAYS</div></div>
+            <div class="event-date-badge"><div class="event-date-month">SEP</div><div class="event-date-num">20</div></div>
+          </div>
+          <div class="event-card-body">
+            <div class="event-admin-title">Global Worship Conference — Africa</div>
+            <div class="event-admin-meta">
+              <span>📍 Nairobi, Kenya</span>
+              <span>📅 Sep 20–26, 2025</span>
+              <span>🌍 Multi-nation</span>
+            </div>
+            <div class="reg-bar-row"><span class="reg-bar-label">Registrations</span><div class="progress" style="flex:1"><div class="progress-bar" style="width:24%"></div></div><span class="reg-bar-count">240/1000</span></div>
+          </div>
+          <div class="event-card-footer">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Editing conference…','success')">✏ Edit</button>
+            <button class="btn btn-success btn-sm" onclick="showToast('Notifications sent!','success')">📢 Notify</button>
+            <button class="btn btn-gold btn-sm" onclick="showToast('Opening registrations…','success')">👥 Regs</button>
+          </div>
+        </div>
+
+        <div class="event-admin-card">
+          <div class="event-card-top">
+            <div><span class="badge badge-gold" style="margin-bottom:0.5rem;">Ongoing</span><div style="font-family:'Cinzel',serif;font-size:0.6rem;color:var(--gold);letter-spacing:0.12em;">365 DAYS · 24/7</div></div>
+            <div class="event-date-badge"><div class="event-date-month">JAN</div><div class="event-date-num">01</div></div>
+          </div>
+          <div class="event-card-body">
+            <div class="event-admin-title">Revival Release</div>
+            <div class="event-admin-meta">
+              <span>📍 Sanctuary + Online</span>
+              <span>📅 Jan 1 – Dec 31, 2025</span>
+              <span>⏱ 24/7 Continuous</span>
+            </div>
+            <div class="reg-bar-row"><span class="reg-bar-label">Watch Bookings</span><div class="progress" style="flex:1"><div class="progress-bar" style="width:60%"></div></div><span class="reg-bar-count">428/700</span></div>
+          </div>
+          <div class="event-card-footer">
+            <button class="btn btn-outline btn-sm" onclick="showToast('Editing…','success')">✏ Edit</button>
+            <button class="btn btn-success btn-sm" onclick="showToast('Notifications sent!','success')">📢 Notify</button>
+            <button class="btn btn-gold btn-sm" onclick="showToast('Opening bookings…','success')">👥 Bookings</button>
+          </div>
+        </div>
+
+        <div class="event-admin-card" style="border-style:dashed; display:flex; align-items:center; justify-content:center; min-height:200px; cursor:pointer;" onclick="openModal('newEventModal')">
+          <div style="text-align:center;">
+            <div style="font-size:2.5rem; color:rgba(201,168,76,0.25); margin-bottom:0.8rem;">➕</div>
+            <div style="font-family:'Cinzel',serif; font-size:0.75rem; color:var(--white-dim); letter-spacing:0.1em;">CREATE NEW EVENT</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- CREATE EVENT MODAL -->
+<div class="modal-overlay" id="newEventModal">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <div class="modal-title">Create New Event</div>
+      <button class="modal-close" onclick="closeModal('newEventModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Event Name</label><input class="form-input" placeholder="e.g. Glory Encounter 2026"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Event Type</label>
+          <select class="form-select"><option>Conference</option><option>Night Vigil</option><option>Worship Night</option><option>Global Tour</option><option>Ongoing / 24-7</option><option>Weekly Recurring</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select"><option>Active</option><option>Draft</option><option>Upcoming</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Start Date</label><input class="form-input" type="date"/></div>
+        <div class="form-group"><label class="form-label">End Date</label><input class="form-input" type="date"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Location</label><input class="form-input" placeholder="City, Country"/></div>
+        <div class="form-group"><label class="form-label">Max Capacity</label><input class="form-input" type="number" placeholder="e.g. 500"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Event Description</label><textarea class="form-textarea" placeholder="Brief description shown on the public events page…"></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Featured?</label><select class="form-select"><option>No</option><option>Yes — Show on Homepage</option></select></div>
+        <div class="form-group"><label class="form-label">Admission</label><select class="form-select"><option>Free</option><option>Paid — KES Amount</option></select></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('newEventModal')">Cancel</button>
+      <button class="btn btn-outline" onclick="showToast('Saved as draft','success'); closeModal('newEventModal')">Save Draft</button>
+      <button class="btn btn-gold" onclick="showToast('Event published!','success'); closeModal('newEventModal')">Publish Event</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+<script>
+  function switchTab(btn, tab) {
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    showToast(`Filtered: ${tab} events`, 'success');
+  }
+</script>
+</body>
+</html>
+
+<script src="../config.js"></script>
+<script type="module">
+  import { initializeApp }       from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  onAuthStateChanged(auth, user => { if (!user) window.location.href = 'login.html'; });
+</script>

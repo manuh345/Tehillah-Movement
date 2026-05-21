@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Prayer Requests — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .prayer-card { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:1.5rem; margin-bottom:1rem; transition:border-color 0.3s; }
+    .prayer-card:hover { border-color:rgba(201,168,76,0.3); }
+    .prayer-card.unread { border-left:3px solid var(--gold); }
+    .prayer-card-header { display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; margin-bottom:0.8rem; flex-wrap:wrap; }
+    .prayer-person { display:flex; align-items:center; gap:0.7rem; }
+    .prayer-person-name { font-size:0.85rem; color:var(--white); font-weight:500; }
+    .prayer-person-loc { font-size:0.72rem; color:var(--white-dim); }
+    .prayer-meta { display:flex; gap:0.6rem; align-items:center; flex-wrap:wrap; }
+    .prayer-text { font-size:0.88rem; color:var(--white-dim); line-height:1.7; margin-bottom:1rem; }
+    .prayer-actions { display:flex; gap:0.6rem; flex-wrap:wrap; }
+    .prayer-notes-box { margin-top:1rem; background:rgba(76,175,132,0.06); border:1px solid rgba(76,175,132,0.2); border-radius:4px; padding:0.8rem; font-size:0.82rem; color:var(--white-dim); }
+    .grid-sidebar { display:grid; grid-template-columns:1fr 320px; gap:1.5rem; }
+    .filter-stack { display:flex; flex-direction:column; gap:1rem; }
+    .sidebar-filter-card { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:1.2rem; }
+    .sidebar-filter-title { font-family:'Cinzel',serif; font-size:0.68rem; letter-spacing:0.12em; color:var(--gold); margin-bottom:1rem; }
+    .category-list { list-style:none; display:flex; flex-direction:column; gap:0.4rem; }
+    .category-list li { display:flex; justify-content:space-between; padding:0.5rem 0; border-bottom:1px solid rgba(201,168,76,0.07); cursor:pointer; font-size:0.82rem; color:var(--white-dim); transition:color 0.2s; }
+    .category-list li:hover { color:var(--gold); }
+    .category-list li:last-child { border-bottom:none; }
+    .cat-count { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); }
+    @media(max-width:1100px){ .grid-sidebar { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div><div class="admin-page-title">Prayer Requests</div><div class="breadcrumb"><a href="index.html">Dashboard</a> › Prayer</div></div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-outline btn-sm" onclick="markAllRead()">✓ Mark All Read</button>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-accent"></div><div class="stat-label">Total Requests</div><div class="stat-value" data-count="124">0</div><div class="stat-icon">🙏</div></div>
+        <div class="stat-card"><div class="stat-card-accent red"></div><div class="stat-label">Unread / New</div><div class="stat-value" data-count="8">0</div><div class="stat-change" style="color:var(--warning)">Needs prayer</div><div class="stat-icon">🔴</div></div>
+        <div class="stat-card"><div class="stat-card-accent green"></div><div class="stat-label">Prayed Over</div><div class="stat-value" data-count="98">0</div><div class="stat-icon">✅</div></div>
+        <div class="stat-card"><div class="stat-card-accent blue"></div><div class="stat-label">Testimonies Received</div><div class="stat-value" data-count="31">0</div><div class="stat-icon">⭐</div></div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchPTab(this,'all')">All (124)</button>
+        <button class="tab-btn" onclick="switchPTab(this,'unread')">Unread (8)</button>
+        <button class="tab-btn" onclick="switchPTab(this,'healing')">Healing</button>
+        <button class="tab-btn" onclick="switchPTab(this,'deliverance')">Deliverance</button>
+        <button class="tab-btn" onclick="switchPTab(this,'family')">Family</button>
+        <button class="tab-btn" onclick="switchPTab(this,'provision')">Provision</button>
+      </div>
+
+      <div class="grid-sidebar">
+        <!-- PRAYER CARDS -->
+        <div id="prayerList">
+
+          <div class="prayer-card unread">
+            <div class="prayer-card-header">
+              <div class="prayer-person">
+                <div class="avatar">G</div>
+                <div><div class="prayer-person-name">Grace Muthoni</div><div class="prayer-person-loc">Nairobi, Kenya · 2 min ago</div></div>
+              </div>
+              <div class="prayer-meta">
+                <span class="badge badge-red">🏥 Healing</span>
+                <span class="badge badge-gold">Unread</span>
+              </div>
+            </div>
+            <p class="prayer-text">"I have been diagnosed with a condition the doctors say is chronic. I am believing God for a miracle and total healing. Please stand with me in prayer and intercession."</p>
+            <div class="prayer-actions">
+              <button class="btn btn-success btn-sm" onclick="markPrayed(this)">🙏 Mark as Prayed</button>
+              <button class="btn btn-outline btn-sm" onclick="replyPrayer()">💬 Reply to Sender</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('Request forwarded to intercession team','success')">📤 Forward to Team</button>
+            </div>
+          </div>
+
+          <div class="prayer-card unread">
+            <div class="prayer-card-header">
+              <div class="prayer-person">
+                <div class="avatar" style="background:rgba(255,255,255,0.08);">?</div>
+                <div><div class="prayer-person-name">Anonymous</div><div class="prayer-person-loc">Location hidden · 15 min ago</div></div>
+              </div>
+              <div class="prayer-meta">
+                <span class="badge badge-blue">⚔️ Deliverance</span>
+                <span class="badge badge-gold">Unread</span>
+              </div>
+            </div>
+            <p class="prayer-text">"I have been in a spiritual battle for many years. I feel oppressed and cannot sleep. I need prayer for deliverance and the peace of God to rest on my life."</p>
+            <div class="prayer-actions">
+              <button class="btn btn-success btn-sm" onclick="markPrayed(this)">🙏 Mark as Prayed</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('Request forwarded to deliverance team','success')">📤 Forward to Team</button>
+            </div>
+          </div>
+
+          <div class="prayer-card">
+            <div class="prayer-card-header">
+              <div class="prayer-person">
+                <div class="avatar">J</div>
+                <div><div class="prayer-person-name">James Ochieng</div><div class="prayer-person-loc">Kisumu, Kenya · 1 hr ago</div></div>
+              </div>
+              <div class="prayer-meta">
+                <span class="badge badge-green">👨‍👩‍👧 Family</span>
+                <span class="badge badge-grey">Read</span>
+              </div>
+            </div>
+            <p class="prayer-text">"My marriage is going through a very difficult season. We have been separated for six months. I am praying for restoration, reconciliation and the hand of God to heal what is broken."</p>
+            <div class="prayer-notes-box">
+              <strong style="color:var(--success);font-size:0.78rem;">✓ Prayed over by intercession team</strong> — May 18, 2025
+            </div>
+            <div class="prayer-actions" style="margin-top:0.8rem;">
+              <button class="btn btn-outline btn-sm" onclick="replyPrayer()">💬 Follow Up</button>
+              <button class="btn btn-outline btn-sm" onclick="showToast('Marked as testimony','success')">⭐ Testimony Received</button>
+            </div>
+          </div>
+
+          <div class="prayer-card">
+            <div class="prayer-card-header">
+              <div class="prayer-person">
+                <div class="avatar">F</div>
+                <div><div class="prayer-person-name">Faith Wangari</div><div class="prayer-person-loc">Nairobi, Kenya · 3 hr ago</div></div>
+              </div>
+              <div class="prayer-meta">
+                <span class="badge badge-gold">💼 Provision</span>
+                <span class="badge badge-grey">Read</span>
+              </div>
+            </div>
+            <p class="prayer-text">"I have been unemployed for eight months. I have tried everything I know. I am trusting God for a breakthrough and open doors that no man can shut."</p>
+            <div class="prayer-notes-box">
+              <strong style="color:var(--success);font-size:0.78rem;">✓ Prayed over by intercession team</strong> — May 18, 2025
+            </div>
+            <div class="prayer-actions" style="margin-top:0.8rem;">
+              <button class="btn btn-outline btn-sm" onclick="replyPrayer()">💬 Follow Up</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SIDEBAR FILTERS -->
+        <div class="filter-stack">
+          <div class="sidebar-filter-card">
+            <div class="sidebar-filter-title">BY CATEGORY</div>
+            <ul class="category-list">
+              <li onclick="showToast('Filtered: Healing','success')"><span>🏥 Healing</span><span class="cat-count">34</span></li>
+              <li onclick="showToast('Filtered: Deliverance','success')"><span>⚔️ Deliverance</span><span class="cat-count">28</span></li>
+              <li onclick="showToast('Filtered: Family','success')"><span>👨‍👩‍👧 Family</span><span class="cat-count">21</span></li>
+              <li onclick="showToast('Filtered: Provision','success')"><span>💼 Provision</span><span class="cat-count">18</span></li>
+              <li onclick="showToast('Filtered: Spiritual Growth','success')"><span>📖 Spiritual Growth</span><span class="cat-count">12</span></li>
+              <li onclick="showToast('Filtered: Nations','success')"><span>🌍 Nations</span><span class="cat-count">7</span></li>
+              <li onclick="showToast('Filtered: Other','success')"><span>✦ Other</span><span class="cat-count">4</span></li>
+            </ul>
+          </div>
+
+          <div class="sidebar-filter-card">
+            <div class="sidebar-filter-title">INTERCESSION TEAM ACTIVE</div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;">
+              <div style="display:flex;align-items:center;gap:0.7rem;">
+                <div class="avatar avatar-sm">A</div>
+                <div><div style="font-size:0.8rem;color:var(--white)">Intercessor — Nairobi</div><div style="font-size:0.7rem;color:var(--success)">● Live now</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.7rem;">
+                <div class="avatar avatar-sm">B</div>
+                <div><div style="font-size:0.8rem;color:var(--white)">Intercessor — Lagos</div><div style="font-size:0.7rem;color:var(--success)">● Live now</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:0.7rem;">
+                <div class="avatar avatar-sm">C</div>
+                <div><div style="font-size:0.8rem;color:var(--white)">Intercessor — London</div><div style="font-size:0.7rem;color:var(--white-dim)">⏱ On at 10 PM</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="sidebar-filter-card">
+            <div class="sidebar-filter-title">QUICK ACTIONS</div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;">
+              <button class="btn btn-success" style="justify-content:center;" onclick="showToast('All unread marked as prayed!','success')">🙏 Pray Over All Unread</button>
+              <button class="btn btn-outline" style="justify-content:center;" onclick="exportCSV('prayerList','prayer-requests.csv')">⬇ Export Requests</button>
+              <button class="btn btn-outline" style="justify-content:center;" onclick="showToast('Report sent to intercession team','success')">📤 Send Team Report</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+  function markPrayed(btn) {
+    const card = btn.closest('.prayer-card');
+    card.classList.remove('unread');
+    btn.outerHTML = '<span style="font-size:0.78rem;color:var(--success)">✓ Prayed over</span>';
+    showToast('Marked as prayed. God is faithful!','success');
+  }
+  function replyPrayer() { showToast('Opening reply to sender…','success'); }
+  function markAllRead() { document.querySelectorAll('.prayer-card.unread').forEach(c=>c.classList.remove('unread')); showToast('All requests marked as read','success'); }
+  function switchPTab(btn,tab) { document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); showToast(`Showing: ${tab} requests`,'success'); }
+</script>
+</body>
+</html>
+
+<!-- Firebase live prayer requests -->
+<script src="../config.js"></script>
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy,
+           updateDoc, deleteDoc, doc, where, limit }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, user => { if (!user) window.location.href = 'login.html'; });
+
+  const catColor = { Healing:'badge-red', Deliverance:'badge-blue', Family:'badge-green', Provision:'badge-gold', 'Spiritual Growth':'badge-grey', Nations:'badge-blue' };
+
+  async function loadPrayers(filterTab='all') {
+    let constraints = [orderBy('createdAt','desc'), limit(20)];
+    if (filterTab === 'unread') constraints.push(where('status','==','unread'));
+    else if (filterTab !== 'all') constraints.push(where('category','==',filterTab));
+
+    const snap = await getDocs(query(collection(db,'prayerRequests'), ...constraints));
+    const data = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+
+    // Update stat counts
+    const allSnap    = await getDocs(collection(db,'prayerRequests'));
+    const unreadSnap = await getDocs(query(collection(db,'prayerRequests'), where('status','==','unread')));
+    const prayedSnap = await getDocs(query(collection(db,'prayerRequests'), where('prayedOver','==',true)));
+    const statEls    = document.querySelectorAll('.stat-value[data-count]');
+    if (statEls[0]) statEls[0].textContent = allSnap.size;
+    if (statEls[1]) statEls[1].textContent = unreadSnap.size;
+    if (statEls[2]) statEls[2].textContent = prayedSnap.size;
+
+    const container = document.getElementById('prayerList');
+    if (!container) return;
+
+    container.innerHTML = data.length === 0
+      ? `<div style="text-align:center;color:var(--white-dim);padding:3rem;">No prayer requests found.</div>`
+      : data.map(p => `
+        <div class="prayer-card ${p.status==='unread'?'unread':''}" id="pc-${p.id}">
+          <div class="prayer-card-header">
+            <div class="prayer-person">
+              <div class="avatar">${(p.name||'A')[0]}</div>
+              <div>
+                <div class="prayer-person-name">${p.name||'Anonymous'}</div>
+                <div class="prayer-person-loc">${p.createdAt?.toDate?p.createdAt.toDate().toLocaleString():'Recently'}</div>
+              </div>
+            </div>
+            <div class="prayer-meta">
+              <span class="badge ${catColor[p.category]||'badge-grey'}">${p.category||'Prayer'}</span>
+              ${p.status==='unread'?'<span class="badge badge-gold">Unread</span>':'<span class="badge badge-grey">Read</span>'}
+            </div>
+          </div>
+          <p class="prayer-text">"${p.text||''}"</p>
+          <div class="prayer-actions">
+            ${!p.prayedOver?`<button class="btn btn-success btn-sm" onclick="markPrayedDB('${p.id}',this)">🙏 Mark as Prayed</button>`:'<span style="font-size:.78rem;color:var(--success)">✓ Prayed over</span>'}
+            ${p.email?`<button class="btn btn-outline btn-sm" onclick="showToast('Reply sent to ${p.name||'user'}','success')">💬 Reply</button>`:''}
+            <button class="btn btn-outline btn-sm" onclick="showToast('Forwarded to intercession team','success')">📤 Forward</button>
+            <button class="btn btn-danger btn-sm" onclick="deletePrayer('${p.id}')">🗑</button>
+          </div>
+        </div>`).join('');
+  }
+
+  window.markPrayedDB = async (id, btn) => {
+    await updateDoc(doc(db,'prayerRequests',id), { prayedOver:true, status:'read' });
+    const card = document.getElementById('pc-'+id);
+    if (card) { card.classList.remove('unread'); btn.outerHTML='<span style="font-size:.78rem;color:var(--success)">✓ Prayed over</span>'; }
+    showToast('Marked as prayed. God is faithful!','success');
+  };
+
+  window.deletePrayer = async (id) => {
+    if (!confirm('Delete this prayer request?')) return;
+    await deleteDoc(doc(db,'prayerRequests',id));
+    document.getElementById('pc-'+id)?.remove();
+    showToast('Deleted','danger');
+  };
+
+  window.markAllRead = async () => {
+    const snap = await getDocs(query(collection(db,'prayerRequests'), where('status','==','unread')));
+    await Promise.all(snap.docs.map(d => updateDoc(d.ref, { status:'read' })));
+    document.querySelectorAll('.prayer-card.unread').forEach(c => c.classList.remove('unread'));
+    showToast('All requests marked as read','success');
+  };
+
+  window.switchPTab = (btn, tab) => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadPrayers(tab);
+  };
+
+  document.addEventListener('DOMContentLoaded', () => loadPrayers());
+</script>

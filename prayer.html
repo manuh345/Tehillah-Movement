@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Prayer & Testimonies — Tehillah Movement</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    .page-hero{min-height:55vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+    .page-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(201,168,76,.1) 0%,transparent 65%),var(--navy-mid)}
+    .big-tabs{display:flex;border-bottom:1px solid rgba(201,168,76,.15);max-width:500px}
+    .big-tab{padding:1.1rem 2.5rem;font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.15em;color:var(--white-dim);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:all .3s}
+    .big-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+    .panel{display:none;padding:5rem 4rem 7rem;background:var(--navy)}
+    .panel.active{display:block}
+    .prayer-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem}
+    .ptype-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem}
+    .ptype-btn{padding:1rem;border:1px solid rgba(201,168,76,.2);background:transparent;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.12em;color:var(--white-dim);cursor:pointer;text-align:center;transition:all .3s}
+    .ptype-btn.active,.ptype-btn:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.06)}
+    .finput{width:100%;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.25);color:var(--white);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;margin-bottom:1rem}
+    .finput:focus{border-color:var(--gold)}
+    .ftextarea{width:100%;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.25);color:var(--white);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;resize:vertical;min-height:150px;margin-bottom:1rem}
+    .ftextarea:focus{border-color:var(--gold)}
+    .flabel{display:block;font-family:'Cinzel',serif;font-size:.63rem;letter-spacing:.15em;color:var(--gold);margin-bottom:.45rem}
+    .testi-big-card{padding:2rem;border:1px solid rgba(201,168,76,.13);margin-bottom:1.5rem;position:relative;overflow:hidden}
+    .testi-big-card::before{content:'"';position:absolute;top:-1rem;left:.8rem;font-family:'Cormorant Garamond',serif;font-size:7rem;color:rgba(201,168,76,.06);line-height:1}
+    .spinner-inline{display:inline-block;width:14px;height:14px;border:2px solid rgba(6,9,26,.3);border-top-color:var(--navy);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .intercessors-box{padding:2rem;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.15);margin-top:2rem}
+    .int-item{display:flex;align-items:center;gap:.8rem;padding:.7rem 0;border-bottom:1px solid rgba(201,168,76,.07)}
+    .int-item:last-child{border-bottom:none}
+    .avatar-sm{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--gold-dim),var(--navy-light));display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold-light);flex-shrink:0}
+    .testi-submit-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem}
+    .filter-pills{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:1.5rem}
+    .filter-pill{padding:.3rem .9rem;border:1px solid rgba(201,168,76,.2);background:transparent;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.12em;color:var(--white-dim);cursor:pointer;transition:all .2s}
+    .filter-pill.active,.filter-pill:hover{border-color:var(--gold);color:var(--gold);background:rgba(201,168,76,.06)}
+    @media(max-width:1024px){.prayer-grid,.testi-submit-grid{grid-template-columns:1fr;gap:3rem}.panel{padding:4rem 2rem}}
+    @media(max-width:640px){.ptype-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="hero-particles"></div>
+  <div style="position:relative;z-index:2;max-width:750px;" class="fade-up">
+    <div class="section-label">Stand With Us</div>
+    <h1 style="font-family:'Cinzel',serif;font-size:clamp(2.5rem,6vw,5rem);">Prayer &amp; <span class="gold">Testimonies</span></h1>
+    <p class="section-subtitle" style="margin:1rem auto 0;font-family:'Cormorant Garamond',serif;font-style:italic;">"The effective, fervent prayer of a righteous man avails much." — James 5:16</p>
+  </div>
+</section>
+
+<!-- TABS -->
+<div style="padding:0 4rem;background:var(--navy);">
+  <div class="container">
+    <div class="big-tabs">
+      <button class="big-tab active" onclick="switchPanel('prayer',this)">🙏 Prayer Requests</button>
+      <button class="big-tab" onclick="switchPanel('testimonies',this)">✦ Testimonies</button>
+    </div>
+  </div>
+</div>
+
+<!-- PRAYER PANEL -->
+<div class="panel active" id="panel-prayer">
+  <div class="container">
+    <div class="prayer-grid">
+      <div class="fade-up">
+        <h3 style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold);letter-spacing:.15em;margin-bottom:1.5rem;">SUBMIT YOUR PRAYER REQUEST</h3>
+        <div style="margin-bottom:.8rem;font-family:'Cinzel',serif;font-size:.63rem;color:var(--gold);letter-spacing:.15em;">CATEGORY</div>
+        <div class="ptype-grid">
+          <button class="ptype-btn active" onclick="setPType(this)">🏥 Healing</button>
+          <button class="ptype-btn" onclick="setPType(this)">👨‍👩‍👧 Family</button>
+          <button class="ptype-btn" onclick="setPType(this)">💼 Provision</button>
+          <button class="ptype-btn" onclick="setPType(this)">⚔️ Deliverance</button>
+          <button class="ptype-btn" onclick="setPType(this)">📖 Spiritual Growth</button>
+          <button class="ptype-btn" onclick="setPType(this)">🌍 Nations</button>
+        </div>
+        <label class="flabel">Your Name (Optional)</label>
+        <input type="text" id="prayerName" class="finput" placeholder="Leave blank for anonymous"/>
+        <label class="flabel">Email (Optional — for follow-up)</label>
+        <input type="email" id="prayerEmail" class="finput" placeholder="your@email.com"/>
+        <label class="flabel">Your Prayer Request</label>
+        <textarea id="prayerText" class="ftextarea" placeholder="Share your prayer request here. Our intercessory team reads and prays over every request received…"></textarea>
+        <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:1.5rem;">
+          <input type="checkbox" id="prayerAnon" style="accent-color:var(--gold);"/>
+          <label for="prayerAnon" style="font-size:.85rem;color:var(--white-dim);cursor:pointer;">Submit anonymously</label>
+        </div>
+        <div id="prayerError" style="display:none;background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.3);color:#F08080;padding:.8rem 1rem;font-size:.82rem;margin-bottom:1rem;"></div>
+        <button class="btn-primary" id="prayerBtn" style="width:100%;" onclick="submitPrayer()">Submit Prayer Request</button>
+        <div id="prayerSuccess" style="display:none;margin-top:1rem;padding:1rem;background:rgba(76,175,132,.1);border:1px solid rgba(76,175,132,.3);color:#6FCFA6;font-size:.88rem;text-align:center;">🙏 Your prayer request has been received. Our team is standing with you in faith.</div>
+      </div>
+      <div class="fade-up delay-2">
+        <div class="scripture">"Cast all your anxiety on Him because He cares for you."<cite>1 Peter 5:7</cite></div>
+        <div class="intercessors-box" style="margin-top:2rem;">
+          <div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--gold);letter-spacing:.2em;margin-bottom:1rem;">INTERCEDING FOR YOU NOW</div>
+          <div class="int-item"><div class="avatar-sm">A</div><div><div style="font-size:.83rem;color:var(--white);">Intercessor — Nairobi</div><div style="font-size:.72rem;color:var(--gold);">● Live now</div></div></div>
+          <div class="int-item"><div class="avatar-sm">B</div><div><div style="font-size:.83rem;color:var(--white);">Intercessor — Lagos</div><div style="font-size:.72rem;color:var(--gold);">● Live now</div></div></div>
+          <div class="int-item"><div class="avatar-sm">C</div><div><div style="font-size:.83rem;color:var(--white);">Intercessor — London</div><div style="font-size:.72rem;color:var(--white-dim);">⏱ On at 10 PM</div></div></div>
+          <p style="font-size:.8rem;color:var(--white-dim);margin-top:1.2rem;line-height:1.7;">Our global intercession team stands in the gap 24/7 — someone is always praying.</p>
+        </div>
+        <div style="margin-top:1.5rem;padding:1.5rem;border:1px solid rgba(201,168,76,.15);">
+          <div style="font-family:'Cinzel',serif;font-size:.68rem;color:var(--gold);margin-bottom:.8rem;letter-spacing:.15em;">URGENT PRAYER?</div>
+          <p style="color:var(--white-dim);font-size:.88rem;line-height:1.8;margin-bottom:1.2rem;">Reach our prayer team directly on WhatsApp for urgent needs or crisis support.</p>
+          <a href="https://wa.me/254700000000" class="btn-secondary" style="display:inline-block;padding:.7rem 1.5rem;font-size:.65rem;">WhatsApp Prayer Line →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIES PANEL -->
+<div class="panel" id="panel-testimonies">
+  <div class="container">
+    <div class="testi-submit-grid">
+      <div class="fade-up">
+        <h3 style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold);letter-spacing:.15em;margin-bottom:1.5rem;">SHARE YOUR TESTIMONY</h3>
+        <label class="flabel">Your Name (Optional)</label>
+        <input type="text" id="testiName" class="finput" placeholder="Or submit anonymously"/>
+        <label class="flabel">City &amp; Country</label>
+        <input type="text" id="testiCity" class="finput" placeholder="e.g. Nairobi, Kenya"/>
+        <label class="flabel">Category</label>
+        <select id="testiCat" class="finput">
+          <option>Healing</option><option>Deliverance &amp; Freedom</option><option>Salvation</option>
+          <option>Encounter with God</option><option>Provision &amp; Miracle</option><option>Restored Relationships</option><option>Spiritual Breakthrough</option><option>Other</option>
+        </select>
+        <label class="flabel">Your Testimony</label>
+        <textarea id="testiText" class="ftextarea" style="min-height:180px;" placeholder="Share what God has done for you…"></textarea>
+        <div style="margin-bottom:1.5rem;"><label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;color:var(--white-dim);font-size:.85rem;"><input type="checkbox" id="testiPublic" style="accent-color:var(--gold);"/> I agree for this testimony to be shared publicly</label></div>
+        <div id="testiError" style="display:none;background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.3);color:#F08080;padding:.8rem 1rem;font-size:.82rem;margin-bottom:1rem;"></div>
+        <button class="btn-primary" id="testiBtn" style="width:100%;" onclick="submitTestimony()">Share My Testimony</button>
+        <div id="testiSuccess" style="display:none;margin-top:1rem;padding:1rem;background:rgba(76,175,132,.1);border:1px solid rgba(76,175,132,.3);color:#6FCFA6;font-size:.88rem;text-align:center;">✦ Thank you! Your testimony will encourage someone. Glory to God!</div>
+        <div class="scripture" style="margin-top:2rem;font-size:1rem;">"They overcame him by the blood of the Lamb and by the word of their testimony."<cite>Revelation 12:11</cite></div>
+      </div>
+      <!-- TESTIMONY WALL -->
+      <div class="fade-up delay-2">
+        <h3 style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold);letter-spacing:.15em;margin-bottom:1.2rem;">TESTIMONY WALL</h3>
+        <div class="filter-pills">
+          <button class="filter-pill active" onclick="filterTesti(this,'')">All</button>
+          <button class="filter-pill" onclick="filterTesti(this,'Healing')">Healing</button>
+          <button class="filter-pill" onclick="filterTesti(this,'Deliverance')">Deliverance</button>
+          <button class="filter-pill" onclick="filterTesti(this,'Encounter')">Encounters</button>
+          <button class="filter-pill" onclick="filterTesti(this,'Miracle')">Miracles</button>
+        </div>
+        <div id="testiWall">
+          <div class="testi-big-card fade-up"><div style="font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;color:var(--gold);margin-bottom:.8rem;">🏥 HEALING</div><p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--white-dim);line-height:1.8;margin-bottom:1rem;position:relative;z-index:1;">"I came to Adullam broken and suicidal. That night the presence of God consumed me in worship and I was completely set free."</p><div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);">— ANONYMOUS · Nairobi, Kenya</div></div>
+          <div class="testi-big-card fade-up delay-1"><div style="font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;color:var(--gold);margin-bottom:.8rem;">⚔️ DELIVERANCE</div><p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--white-dim);line-height:1.8;margin-bottom:1rem;position:relative;z-index:1;">"Seven years of addiction ended in one night at Adullam. No counselling, no rehab — just the presence of God breaking every chain."</p><div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);">— JAMES K. · Mombasa, Kenya</div></div>
+          <div class="testi-big-card fade-up delay-2"><div style="font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;color:var(--gold);margin-bottom:.8rem;">✦ ENCOUNTER</div><p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--white-dim);line-height:1.8;margin-bottom:1rem;position:relative;z-index:1;">"During the midnight watch I had a vision of the Lord. He spoke to me about my purpose. Three months later everything He showed me began to happen."</p><div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);">— GRACE M. · Kampala, Uganda</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="footer-mount"></div>
+<script src="layout.js"></script>
+<script src="main.js"></script>
+
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs,
+           query, where, orderBy, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const app = initializeApp(TEHILLAH_CONFIG.firebase);
+  const db  = getFirestore(app);
+
+  let selectedCategory = 'Healing';
+
+  window.setPType = (btn) => {
+    document.querySelectorAll('.ptype-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedCategory = btn.textContent.replace(/[^\w\s]/g,'').trim();
+  };
+
+  window.submitPrayer = async () => {
+    const text  = document.getElementById('prayerText').value.trim();
+    const name  = document.getElementById('prayerAnon').checked ? 'Anonymous' : (document.getElementById('prayerName').value.trim() || 'Anonymous');
+    const email = document.getElementById('prayerEmail').value.trim();
+    const errEl = document.getElementById('prayerError');
+    errEl.style.display = 'none';
+    if (!text) { errEl.textContent='Please write your prayer request.'; errEl.style.display='block'; return; }
+
+    const btn = document.getElementById('prayerBtn');
+    btn.innerHTML = '<span class="spinner-inline"></span> Submitting…';
+    btn.style.pointerEvents = 'none';
+
+    try {
+      await addDoc(collection(db,'prayerRequests'), {
+        name, email: email||'', category: selectedCategory,
+        text, status:'unread', prayedOver:false,
+        createdAt: serverTimestamp()
+      });
+      if (email && typeof emailjs !== 'undefined') {
+        emailjs.init(TEHILLAH_CONFIG.emailjs.publicKey);
+        emailjs.send(TEHILLAH_CONFIG.emailjs.serviceId, TEHILLAH_CONFIG.emailjs.templates.prayerReceived, {
+          to_name: name, to_email: email, ministry: TEHILLAH_CONFIG.site.name
+        }).catch(()=>{});
+      }
+      document.getElementById('prayerText').value = '';
+      document.getElementById('prayerSuccess').style.display = 'block';
+    } catch(e) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    }
+    btn.innerHTML = 'Submit Prayer Request';
+    btn.style.pointerEvents = '';
+  };
+
+  window.submitTestimony = async () => {
+    const text = document.getElementById('testiText').value.trim();
+    const errEl = document.getElementById('testiError');
+    errEl.style.display = 'none';
+    if (!text) { errEl.textContent='Please write your testimony.'; errEl.style.display='block'; return; }
+
+    const btn = document.getElementById('testiBtn');
+    btn.innerHTML = '<span class="spinner-inline"></span> Submitting…';
+    btn.style.pointerEvents = 'none';
+
+    try {
+      await addDoc(collection(db,'testimonies'), {
+        name:     document.getElementById('testiName').value.trim() || 'Anonymous',
+        location: document.getElementById('testiCity').value.trim(),
+        category: document.getElementById('testiCat').value,
+        text,
+        approved: false,
+        isPublic: document.getElementById('testiPublic').checked,
+        createdAt: serverTimestamp()
+      });
+      document.getElementById('testiText').value = '';
+      document.getElementById('testiSuccess').style.display = 'block';
+    } catch(e) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    }
+    btn.innerHTML = 'Share My Testimony';
+    btn.style.pointerEvents = '';
+  };
+
+  // Load approved testimonies from Firebase
+  async function loadTestimonies() {
+    try {
+      const snap = await getDocs(query(collection(db,'testimonies'), where('approved','==',true), orderBy('createdAt','desc')));
+      if (snap.empty) return;
+      const wall = document.getElementById('testiWall');
+      wall.innerHTML = snap.docs.map(d => {
+        const t = d.data();
+        return `<div class="testi-big-card fade-up">
+          <div style="font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;color:var(--gold);margin-bottom:.8rem;">${t.category||'TESTIMONY'}</div>
+          <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--white-dim);line-height:1.8;margin-bottom:1rem;position:relative;z-index:1;">"${t.text}"</p>
+          <div style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);">— ${t.name||'ANONYMOUS'}${t.location?' · '+t.location:''}</div>
+        </div>`;
+      }).join('');
+    } catch(e) { /* keep static testimonies */ }
+  }
+
+  window.filterTesti = (btn, cat) => {
+    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+  };
+
+  document.addEventListener('DOMContentLoaded', loadTestimonies);
+</script>
+
+<script>
+  function switchPanel(id, btn) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.big-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('panel-'+id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>

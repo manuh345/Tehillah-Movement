@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Users — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .user-detail-panel { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:1.5rem; }
+    .user-profile-top { display:flex; gap:1.5rem; align-items:center; margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--border); }
+    .user-big-avatar { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,var(--gold-dim),var(--navy-light)); display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:1.5rem; color:var(--gold-light); border:2px solid rgba(201,168,76,0.3); flex-shrink:0; }
+    .user-info-name { font-family:'Cinzel',serif; font-size:1rem; color:var(--white); margin-bottom:0.3rem; }
+    .user-info-email { font-size:0.82rem; color:var(--white-dim); }
+    .user-info-role { margin-top:0.5rem; }
+    .user-stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .user-stat-mini { padding:1rem; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:6px; text-align:center; }
+    .user-stat-mini-num { font-family:'Cinzel',serif; font-size:1.3rem; color:var(--gold); }
+    .user-stat-mini-label { font-size:0.68rem; color:var(--white-dim); }
+    .activity-mini-item { display:flex; gap:0.6rem; padding:0.6rem 0; border-bottom:1px solid rgba(201,168,76,0.06); font-size:0.78rem; color:var(--white-dim); }
+    .activity-mini-item:last-child { border-bottom:none; }
+    .two-col { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; }
+    @media(max-width:1100px){ .two-col { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div><div class="admin-page-title">Users & Members</div><div class="breadcrumb"><a href="index.html">Dashboard</a> › Users</div></div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-outline btn-sm" onclick="exportCSV('usersTable','users.csv')">⬇ Export</button>
+        <button class="btn btn-gold btn-sm" onclick="openModal('addUserModal')">➕ Add User</button>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-accent"></div><div class="stat-label">Total Users</div><div class="stat-value" data-count="1284">0</div><div class="stat-icon">👥</div></div>
+        <div class="stat-card"><div class="stat-card-accent green"></div><div class="stat-label">Active This Month</div><div class="stat-value" data-count="847">0</div><div class="stat-icon">🟢</div></div>
+        <div class="stat-card"><div class="stat-card-accent blue"></div><div class="stat-label">Monthly Partners</div><div class="stat-value" data-count="42">0</div><div class="stat-icon">♾</div></div>
+        <div class="stat-card"><div class="stat-card-accent gold"></div><div class="stat-label">Admin Users</div><div class="stat-value" data-count="4">0</div><div class="stat-icon">🔐</div></div>
+      </div>
+
+      <div class="two-col">
+
+        <!-- USER TABLE -->
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">All Users</div>
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+              <select class="filter-select" onchange="filterUserRole(this.value)"><option value="">All Roles</option><option>Admin</option><option>Partner</option><option>Member</option><option>Volunteer</option></select>
+            </div>
+          </div>
+          <div class="admin-card-body">
+            <div class="table-toolbar">
+              <div class="search-box"><span>🔍</span><input type="text" placeholder="Search name or email…" oninput="filterUsers(this.value)"/></div>
+            </div>
+            <div style="overflow-x:auto;">
+              <table class="admin-table" id="usersTable">
+                <thead>
+                  <tr><th>#</th><th>User</th><th>Role</th><th>Location</th><th>Joined</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody id="usersTbody"></tbody>
+              </table>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.2rem;flex-wrap:wrap;gap:0.8rem;">
+              <span style="font-size:0.78rem;color:var(--white-dim);">Showing 1–10 of 1,284 users</span>
+              <div style="display:flex;gap:0.5rem;">
+                <button class="btn btn-outline btn-sm">← Prev</button>
+                <button class="btn btn-gold btn-sm">1</button>
+                <button class="btn btn-outline btn-sm">2</button>
+                <button class="btn btn-outline btn-sm">Next →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- USER DETAIL PANEL -->
+        <div>
+          <div class="user-detail-panel">
+            <div class="user-profile-top">
+              <div class="user-big-avatar" id="detailAvatar">J</div>
+              <div>
+                <div class="user-info-name" id="detailName">John Kamau</div>
+                <div class="user-info-email" id="detailEmail">john@gmail.com</div>
+                <div class="user-info-role"><span class="badge badge-gold" id="detailRole">Partner</span></div>
+              </div>
+            </div>
+            <div class="user-stats-row">
+              <div class="user-stat-mini"><div class="user-stat-mini-num">8</div><div class="user-stat-mini-label">Bookings</div></div>
+              <div class="user-stat-mini"><div class="user-stat-mini-num" style="color:var(--success)">KES 50K</div><div class="user-stat-mini-label">Given</div></div>
+              <div class="user-stat-mini"><div class="user-stat-mini-num" style="color:var(--info)">3</div><div class="user-stat-mini-label">Events</div></div>
+            </div>
+            <div style="margin-bottom:1.2rem;">
+              <div style="font-family:'Cinzel',serif;font-size:0.65rem;color:var(--gold);letter-spacing:0.12em;margin-bottom:0.8rem;">RECENT ACTIVITY</div>
+              <div class="activity-mini-item">🎟 Booked Morning Watch · May 19</div>
+              <div class="activity-mini-item">♦ Donated KES 5,000 · May 18</div>
+              <div class="activity-mini-item">📅 Registered for Glory Encounter · May 15</div>
+              <div class="activity-mini-item">🙌 Volunteer application — Worship Team · May 10</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;">
+              <button class="btn btn-outline" style="justify-content:center;" onclick="showToast('Email sent to user','success')">📧 Send Email</button>
+              <button class="btn btn-outline" style="justify-content:center;" onclick="showToast('Opening user edit…','success')">✏ Edit User</button>
+              <button class="btn btn-danger" style="justify-content:center;" onclick="showToast('User suspended','danger')">⛔ Suspend Account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add New User</div><button class="modal-close" onclick="closeModal('addUserModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">First Name</label><input class="form-input" placeholder="First name"/></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" placeholder="Last name"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" placeholder="user@email.com"/></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Role</label><select class="form-select"><option>Member</option><option>Partner</option><option>Volunteer</option><option>Admin</option></select></div>
+        <div class="form-group"><label class="form-label">City & Country</label><input class="form-input" placeholder="Nairobi, Kenya"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Phone</label><input class="form-input" placeholder="+254 700 000 000"/></div>
+      <div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:0.5rem;">
+        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--white-dim);cursor:pointer;"><input type="checkbox" checked style="accent-color:var(--gold);"/> Send welcome email</label>
+        <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--white-dim);cursor:pointer;"><input type="checkbox" style="accent-color:var(--gold);"/> Subscribe to newsletter</label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addUserModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveUser()">Add User</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+<script>
+const users = [
+  { id:1,  name:'John Kamau',      email:'john@gmail.com',    role:'Partner',   city:'Nairobi',   joined:'Jan 2024', status:'Active' },
+  { id:2,  name:'Grace Muthoni',   email:'grace@mail.com',    role:'Partner',   city:'Nairobi',   joined:'Feb 2024', status:'Active' },
+  { id:3,  name:'Peter Odhiambo',  email:'peter@outlook.com', role:'Volunteer', city:'Kisumu',    joined:'Mar 2024', status:'Active' },
+  { id:4,  name:'Mercy Achieng',   email:'mercy@yahoo.com',   role:'Member',    city:'Mombasa',   joined:'Mar 2024', status:'Active' },
+  { id:5,  name:'Samuel Were',     email:'sam@gmail.com',     role:'Member',    city:'Nairobi',   joined:'Apr 2024', status:'Active' },
+  { id:6,  name:'Faith Njeri',     email:'faith@mail.com',    role:'Partner',   city:'Nakuru',    joined:'Apr 2024', status:'Active' },
+  { id:7,  name:'Daniel Maina',    email:'dan@gmail.com',     role:'Member',    city:'Nairobi',   joined:'May 2024', status:'Inactive' },
+  { id:8,  name:'Ruth Wanjiku',    email:'ruth@mail.com',     role:'Volunteer', city:'Thika',     joined:'Jun 2024', status:'Active' },
+  { id:9,  name:'Joseph Kibet',    email:'joe@gmail.com',     role:'Member',    city:'Eldoret',   joined:'Jul 2024', status:'Active' },
+  { id:10, name:'Esther Chebet',   email:'esther@mail.com',   role:'Admin',     city:'Nairobi',   joined:'Aug 2024', status:'Active' },
+];
+
+const roleBadge = r => r==='Admin'?'badge-red':r==='Partner'?'badge-gold':r==='Volunteer'?'badge-blue':'badge-grey';
+const statusBadge = s => s==='Active'?'badge-green':'badge-grey';
+
+function renderUsers(data) {
+  document.getElementById('usersTbody').innerHTML = data.map(u => `
+    <tr style="cursor:pointer;" onclick="selectUser(${u.id})">
+      <td style="color:var(--white-dim)">${u.id}</td>
+      <td><div class="user-cell"><div class="avatar avatar-sm">${u.name[0]}</div><div><div style="font-size:0.85rem;color:var(--white)">${u.name}</div><div style="font-size:0.72rem;color:var(--white-dim)">${u.email}</div></div></div></td>
+      <td><span class="badge ${roleBadge(u.role)}">${u.role}</span></td>
+      <td style="color:var(--white-dim)">${u.city}</td>
+      <td style="color:var(--white-dim)">${u.joined}</td>
+      <td><span class="badge ${statusBadge(u.status)}">${u.status}</span></td>
+      <td>
+        <div style="display:flex;gap:0.4rem;">
+          <button class="btn btn-outline btn-icon btn-sm" onclick="event.stopPropagation();selectUser(${u.id})" title="View">👁</button>
+          <button class="btn btn-danger btn-icon btn-sm" onclick="event.stopPropagation();deleteRow(this,'${u.name}')" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function selectUser(id) {
+  const u = users.find(x=>x.id===id);
+  document.getElementById('detailAvatar').textContent = u.name[0];
+  document.getElementById('detailName').textContent = u.name;
+  document.getElementById('detailEmail').textContent = u.email;
+  document.getElementById('detailRole').textContent = u.role;
+  document.getElementById('detailRole').className = 'badge ' + roleBadge(u.role);
+}
+
+function filterUsers(val) { const q=val.toLowerCase(); renderUsers(users.filter(u=>u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q))); }
+function filterUserRole(val) { renderUsers(val?users.filter(u=>u.role===val):users); }
+function saveUser() { closeModal('addUserModal'); showToast('User added & welcome email sent!','success'); }
+
+document.addEventListener('DOMContentLoaded', ()=>renderUsers(users));
+</script>
+</body>
+</html>
+
+<!-- Firebase live users -->
+<script src="../config.js"></script>
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy,
+           deleteDoc, doc, limit }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, user => { if (!user) window.location.href = 'login.html'; });
+
+  const roleBadge = r => r==='Admin'?'badge-red':r==='Partner'?'badge-gold':r==='Volunteer'?'badge-blue':'badge-grey';
+
+  async function loadUsers() {
+    // Pull from multiple collections to build a user picture
+    const [bookSnap, donSnap, volSnap] = await Promise.all([
+      getDocs(query(collection(db,'bookings'),   orderBy('createdAt','desc'), limit(100))),
+      getDocs(query(collection(db,'donations'),  orderBy('createdAt','desc'), limit(100))),
+      getDocs(query(collection(db,'volunteers'), orderBy('createdAt','desc'), limit(100))),
+    ]);
+
+    // Merge by email into unique users
+    const userMap = {};
+    const addUser = (d, role, source) => {
+      const data  = d.data();
+      const email = data.email || '';
+      if (!email) return;
+      if (!userMap[email]) {
+        userMap[email] = {
+          id: d.id, name: data.name || 'Unknown', email,
+          phone: data.phone || '—', city: data.city || '—',
+          role, joined: data.createdAt?.toDate?.() || new Date(),
+          status: 'Active', bookings: 0, donations: 0, source
+        };
+      }
+      if (source === 'bookings')   userMap[email].bookings++;
+      if (source === 'donations')  userMap[email].donations += (data.amount||0);
+      if (role === 'Partner' && source === 'donations') userMap[email].role = 'Partner';
+      if (role === 'Volunteer' && source === 'volunteers') userMap[email].role = 'Volunteer';
+    };
+
+    bookSnap.forEach(d => addUser(d,'Member','bookings'));
+    donSnap.forEach(d => addUser(d, d.data().type==='Monthly Partner'?'Partner':'Member','donations'));
+    volSnap.forEach(d => addUser(d,'Volunteer','volunteers'));
+
+    const users = Object.values(userMap);
+    const tbody = document.getElementById('usersTbody');
+    if (!tbody) return;
+
+    // Update stats
+    const statEls = document.querySelectorAll('.stat-value[data-count]');
+    if (statEls[0]) statEls[0].textContent = users.length;
+    if (statEls[2]) statEls[2].textContent = users.filter(u=>u.role==='Partner').length;
+
+    tbody.innerHTML = users.length === 0
+      ? `<tr><td colspan="7" style="text-align:center;color:var(--white-dim);padding:2rem;">No users yet. They appear here when they book, donate, or volunteer.</td></tr>`
+      : users.map((u,i) => `
+        <tr style="cursor:pointer;" onclick="selectUserLive(${JSON.stringify(u).replace(/"/g,'&quot;')})">
+          <td style="color:var(--white-dim)">${i+1}</td>
+          <td><div style="display:flex;align-items:center;gap:.7rem;">
+            <div class="avatar avatar-sm">${(u.name||'?')[0]}</div>
+            <div><div style="font-size:.85rem;color:var(--white)">${u.name}</div>
+            <div style="font-size:.72rem;color:var(--white-dim)">${u.email}</div></div>
+          </div></td>
+          <td><span class="badge ${roleBadge(u.role)}">${u.role}</span></td>
+          <td style="color:var(--white-dim)">${u.city}</td>
+          <td style="color:var(--white-dim)">${u.joined.toLocaleDateString?.()}</td>
+          <td><span class="badge badge-green">Active</span></td>
+          <td><button class="btn btn-danger btn-icon btn-sm" onclick="event.stopPropagation();deleteDoc(doc(db,'bookings','${u.id}'));showToast('User removed','danger')" title="Remove">🗑</button></td>
+        </tr>`).join('');
+  }
+
+  window.selectUserLive = (u) => {
+    document.getElementById('detailAvatar').textContent = (u.name||'?')[0];
+    document.getElementById('detailName').textContent   = u.name;
+    document.getElementById('detailEmail').textContent  = u.email;
+    document.getElementById('detailRole').textContent   = u.role;
+    document.getElementById('detailRole').className     = 'badge ' + roleBadge(u.role);
+    const statsEl = document.querySelectorAll('.user-stat-mini-num');
+    if (statsEl[0]) statsEl[0].textContent = u.bookings;
+    if (statsEl[1]) statsEl[1].textContent = `KES ${(u.donations||0).toLocaleString()}`;
+  };
+
+  window.filterUsers    = (val)  => loadUsers();
+  window.filterUserRole = (val)  => loadUsers();
+  window.saveUser       = ()     => { closeModal('addUserModal'); showToast('User added!','success'); loadUsers(); };
+
+  document.addEventListener('DOMContentLoaded', loadUsers);
+</script>

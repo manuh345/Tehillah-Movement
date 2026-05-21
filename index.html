@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tehillah Movement — Hosting His Presence</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── HERO ── */
+    .home-hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; position: relative; overflow: hidden;
+      padding: 8rem 2rem 4rem;
+    }
+    .home-hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 90% 70% at 50% 30%, rgba(201,168,76,0.12) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 50% at 20% 80%, rgba(26,37,80,0.8) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 50% at 80% 20%, rgba(13,18,48,0.9) 0%, transparent 60%),
+        linear-gradient(180deg, #06091A 0%, #0D1230 50%, #06091A 100%);
+    }
+    .hero-cross {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 600px;
+      opacity: 0.025;
+      background:
+        linear-gradient(var(--gold), var(--gold)) center/4px 100% no-repeat,
+        linear-gradient(var(--gold), var(--gold)) center/100% 4px no-repeat;
+      pointer-events: none;
+    }
+    .hero-rays {
+      position: absolute; inset: 0;
+      background: conic-gradient(from 0deg at 50% 40%,
+        transparent 0deg,
+        rgba(201,168,76,0.02) 20deg,
+        transparent 40deg,
+        rgba(201,168,76,0.015) 80deg,
+        transparent 100deg,
+        rgba(201,168,76,0.02) 150deg,
+        transparent 180deg,
+        rgba(201,168,76,0.015) 220deg,
+        transparent 260deg,
+        rgba(201,168,76,0.02) 300deg,
+        transparent 360deg);
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 900px; }
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif; font-size: 0.7rem; letter-spacing: 0.4em;
+      color: var(--gold); margin-bottom: 1.5rem; text-transform: uppercase;
+      display: flex; align-items: center; justify-content: center; gap: 1rem;
+      animation: fadeDown 1s ease 0.3s both;
+    }
+    .hero-eyebrow span { width: 40px; height: 1px; background: var(--gold-dim); display: inline-block; }
+    .hero-title {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 1.0; font-weight: 400; letter-spacing: 0.05em;
+      color: var(--white);
+      animation: fadeUp 1s ease 0.5s both;
+    }
+    .hero-title em { color: var(--gold); font-style: normal; }
+    .hero-tagline {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: clamp(1.2rem, 2.5vw, 1.8rem); font-weight: 300;
+      color: var(--white-dim); margin: 1.5rem 0 3rem;
+      animation: fadeUp 1s ease 0.7s both;
+    }
+    .hero-actions {
+      display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+      animation: fadeUp 1s ease 0.9s both;
+    }
+    .hero-scroll {
+      position: absolute; bottom: 3rem; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: var(--gold-dim); font-family: 'Cinzel', serif; font-size: 0.55rem; letter-spacing: 0.2em;
+      animation: pulse 2s infinite;
+    }
+    .hero-scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold-dim), transparent); }
+
+    /* ── QUICK ACCESS ── */
+    .quick-access {
+      background: var(--navy-mid);
+      border-top: 1px solid rgba(201,168,76,0.1);
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+      padding: 0;
+    }
+    .quick-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr);
+    }
+    .quick-item {
+      padding: 2rem 1.5rem; text-align: center;
+      border-right: 1px solid rgba(201,168,76,0.1);
+      text-decoration: none; color: var(--white-dim);
+      transition: all 0.3s; display: flex; flex-direction: column;
+      align-items: center; gap: 0.7rem;
+    }
+    .quick-item:last-child { border-right: none; }
+    .quick-item:hover { background: rgba(201,168,76,0.06); color: var(--gold-light); }
+    .quick-icon { font-size: 1.5rem; color: var(--gold); }
+    .quick-label { font-family: 'Cinzel', serif; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; }
+
+    /* ── EXPRESSIONS ── */
+    .expressions { padding: 7rem 4rem; background: var(--navy); }
+    .expr-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 2px;
+      margin-top: 4rem;
+    }
+    .expr-card {
+      position: relative; padding: 4rem 3rem; overflow: hidden;
+      background: var(--navy-mid); cursor: pointer;
+      text-decoration: none; display: block;
+      transition: all 0.4s;
+    }
+    .expr-card::before {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(201,168,76,0.08), transparent);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .expr-card:hover::before { opacity: 1; }
+    .expr-card:hover { transform: scale(1.01); z-index: 2; }
+    .expr-number {
+      font-family: 'Cinzel', serif; font-size: 5rem; font-weight: 700;
+      color: rgba(201,168,76,0.06); line-height: 1;
+      position: absolute; top: 1.5rem; right: 2rem;
+    }
+    .expr-tag { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.3em; color: var(--gold); margin-bottom: 1rem; }
+    .expr-title { font-family: 'Cinzel', serif; font-size: 2rem; color: var(--white); margin-bottom: 1rem; }
+    .expr-desc { font-size: 0.95rem; color: var(--white-dim); line-height: 1.8; }
+    .expr-arrow { margin-top: 2rem; color: var(--gold); font-size: 1.5rem; transition: transform 0.3s; }
+    .expr-card:hover .expr-arrow { transform: translateX(8px); }
+
+    /* ── SCRIPTURE SECTION ── */
+    .scripture-section {
+      padding: 6rem 4rem;
+      background: linear-gradient(135deg, var(--navy-mid), var(--navy));
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .scripture-section::before {
+      content: '❝'; position: absolute; top: 2rem; left: 3rem;
+      font-size: 12rem; color: rgba(201,168,76,0.04);
+      font-family: 'Cormorant Garamond', serif; line-height: 1;
+    }
+    .scripture-big {
+      font-family: 'Cormorant Garamond', serif; font-style: italic;
+      font-size: clamp(1.6rem, 4vw, 3rem); font-weight: 300; line-height: 1.5;
+      color: var(--white); max-width: 900px; margin: 0 auto;
+    }
+    .scripture-big em { color: var(--gold); font-style: normal; }
+    .scripture-ref { margin-top: 2rem; font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.8rem; letter-spacing: 0.2em; }
+
+    /* ── UPCOMING EVENTS STRIP ── */
+    .events-strip { padding: 6rem 4rem; background: var(--navy); }
+    .event-list { margin-top: 3rem; display: flex; flex-direction: column; gap: 0; }
+    .event-row {
+      display: grid; grid-template-columns: 120px 1fr auto;
+      align-items: center; gap: 2rem; padding: 2rem 0;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+      transition: background 0.3s; text-decoration: none; color: var(--white);
+    }
+    .event-row:hover { background: rgba(201,168,76,0.04); padding-left: 1rem; margin-left: -1rem; margin-right: -1rem; }
+    .event-date-box { text-align: center; }
+    .event-date-month { font-family: 'Cinzel', serif; font-size: 0.6rem; letter-spacing: 0.2em; color: var(--gold); }
+    .event-date-day { font-family: 'Cinzel', serif; font-size: 2.5rem; line-height: 1; color: var(--white); }
+    .event-name { font-family: 'Cinzel', serif; font-size: 1.1rem; margin-bottom: 0.3rem; }
+    .event-loc { font-size: 0.85rem; color: var(--white-dim); }
+    .event-tag { font-size: 0.75rem; }
+
+    /* ── MISSION BLOCK ── */
+    .mission-block {
+      padding: 7rem 4rem;
+      background: var(--navy-mid);
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center;
+    }
+    .mission-visual {
+      position: relative; height: 500px;
+      background: linear-gradient(135deg, var(--navy-light), var(--accent));
+      border: 1px solid rgba(201,168,76,0.2);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .mission-visual-inner {
+      text-align: center; z-index: 2; position: relative;
+    }
+    .mission-big-number {
+      font-family: 'Cinzel', serif; font-size: 8rem; font-weight: 700;
+      color: rgba(201,168,76,0.15); line-height: 1; display: block;
+    }
+    .mission-visual-text { font-family: 'Cinzel', serif; color: var(--gold); font-size: 0.8rem; letter-spacing: 0.3em; }
+    .mission-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(201,168,76,0.15), transparent 70%);
+      pointer-events: none;
+    }
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+    .stat-item { text-align: center; }
+    .stat-num { font-family: 'Cinzel', serif; font-size: 2.5rem; color: var(--gold); display: block; }
+    .stat-label { font-size: 0.8rem; color: var(--white-dim); }
+
+    /* ── CTA SECTION ── */
+    .cta-section {
+      padding: 8rem 4rem; text-align: center;
+      background: linear-gradient(180deg, var(--navy) 0%, var(--navy-mid) 100%);
+      position: relative; overflow: hidden;
+    }
+    .cta-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 400px;
+      background: radial-gradient(ellipse, rgba(201,168,76,0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+
+    @media (max-width: 1024px) {
+      .expr-grid { grid-template-columns: 1fr; }
+      .mission-block { grid-template-columns: 1fr; }
+      .quick-grid { grid-template-columns: repeat(3, 1fr); }
+      .expressions, .events-strip, .mission-block, .cta-section { padding: 5rem 2rem; }
+    }
+    @media (max-width: 768px) {
+      .quick-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-row { grid-template-columns: 1fr; }
+      .event-row { grid-template-columns: 80px 1fr; }
+      .event-row .event-tag { display: none; }
+      .scripture-section { padding: 5rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV injected by layout.js -->
+
+  <!-- HERO -->
+  <section class="home-hero">
+    <div class="home-hero-bg"></div>
+    <div class="hero-cross"></div>
+    <div class="hero-rays"></div>
+    <div class="hero-particles"></div>
+
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span></span> A Global Worship Movement <span></span>
+      </div>
+      <h1 class="hero-title">
+        Hosting<br><em>His Presence</em>
+      </h1>
+      <p class="hero-tagline">
+        "Raising Vessels. Releasing Revival."
+      </p>
+      <div class="hero-actions">
+        <a href="glory-encounter.html" class="btn-primary">Join Glory Encounter</a>
+        <a href="media.html" class="btn-secondary">▶ Watch Live</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll">
+      <div class="hero-scroll-line"></div>
+      SCROLL
+    </div>
+  </section>
+
+  <!-- QUICK ACCESS -->
+  <div class="quick-access">
+    <div class="quick-grid">
+      <a href="give.html" class="quick-item">
+        <span class="quick-icon">♦</span>
+        <span class="quick-label">Support</span>
+      </a>
+      <a href="glory-encounter.html" class="quick-item">
+        <span class="quick-icon">★</span>
+        <span class="quick-label">Register</span>
+      </a>
+      <a href="volunteer.html" class="quick-item">
+        <span class="quick-icon">✦</span>
+        <span class="quick-label">Volunteer</span>
+      </a>
+      <a href="invite.html" class="quick-item">
+        <span class="quick-icon">✉</span>
+        <span class="quick-label">Invite Us</span>
+      </a>
+      <a href="media.html" class="quick-item">
+        <span class="quick-icon">▶</span>
+        <span class="quick-label">Watch Live</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- CORE EXPRESSIONS -->
+  <section class="expressions">
+    <div class="container">
+      <div class="fade-up" style="text-align:center; margin-bottom:1rem;">
+        <div class="section-label">Core Expressions</div>
+      </div>
+      <div class="fade-up" style="text-align:center;">
+        <h2 class="section-title">The Movement in Motion</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Four expressions of God's presence being hosted through worship, prayer, and revival.</p>
+      </div>
+    </div>
+    <div class="expr-grid" style="max-width:1200px; margin:4rem auto 0;">
+      <a href="glory-encounter.html" class="expr-card fade-up">
+        <span class="expr-number">01</span>
+        <div class="expr-tag">7 DAYS · 24/7</div>
+        <h3 class="expr-title">Glory Encounter</h3>
+        <p class="expr-desc">A 7-day, 24/7 worship and prayer experience focused on hosting God's presence, spiritual renewal, healing, and revival.</p>
+        <div class="expr-arrow">→</div>
+      </a>
+      <a href="revival-release.html" class="expr-card fade-up delay-1">
+        <span class="expr-number">02</span>
+        <div class="expr-tag">365 DAYS · CONTINUOUS</div>
+        <h3 class="expr-title">Revival Release</h3>
+        <p class="expr-desc">A 365-day, 24/7 worship movement establishing unceasing intercession that releases revival across cities and nations.</p>
+        <div class="expr-arrow">→</div>
+      </a>
+      <a href="events.html" class="expr-card fade-up delay-2">
+        <span class="expr-number">03</span>
+        <div class="expr-tag">GLOBAL · BIANNUAL</div>
+        <h3 class="expr-title">Global Worship Conferences</h3>
+        <p class="expr-desc">Two 7-day worship conferences held across two continents, uniting believers globally for worship, prayer, and revival.</p>
+        <div class="expr-arrow">→</div>
+      </a>
+      <a href="adullam.html" class="expr-card fade-up delay-3">
+        <span class="expr-number">04</span>
+        <div class="expr-tag">EVERY SATURDAY NIGHT</div>
+        <h3 class="expr-title">Adullam</h3>
+        <p class="expr-desc">A weekly Saturday night vigil of worship, prayer, deliverance, and impartation — where God raises and transforms vessels.</p>
+        <div class="expr-arrow">→</div>
+      </a>
+    </div>
+  </section>
+
+  <!-- SCRIPTURE -->
+  <section class="scripture-section fade-up">
+    <div class="container">
+      <p class="scripture-big">
+        "The earth shall be filled with<br>
+        <em>the knowledge of the glory of the Lord,</em><br>
+        as the waters cover the sea."
+      </p>
+      <p class="scripture-ref">— Habakkuk 2:14</p>
+    </div>
+  </section>
+
+  <!-- MISSION + STATS -->
+  <section class="mission-block">
+    <div class="fade-up">
+      <div class="section-label">Our Foundation</div>
+      <h2 class="section-title" style="font-size:clamp(2rem,3.5vw,3rem);">
+        A Generation<br>Marked by Glory
+      </h2>
+      <p style="color:var(--white-dim); font-size:1rem; line-height:1.9; margin-bottom:2rem;">
+        Tehillah Movement exists to create atmospheres for God's presence through continuous worship, prayer, discipleship, and revival — preparing people to become yielded vessels that God can use for His glory.
+      </p>
+      <a href="about.html" class="btn-secondary">Our Vision & Mission</a>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-num">24/7</span>
+          <span class="stat-label">Continuous Worship</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">7</span>
+          <span class="stat-label">Days of Glory Encounter</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">∞</span>
+          <span class="stat-label">Nations Reached</span>
+        </div>
+      </div>
+    </div>
+    <div class="mission-visual fade-up delay-2">
+      <div class="mission-glow"></div>
+      <div class="mission-visual-inner">
+        <span class="mission-big-number">365</span>
+        <p class="mission-visual-text">DAYS OF REVIVAL</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- UPCOMING EVENTS -->
+  <section class="events-strip">
+    <div class="container">
+      <div class="fade-up" style="display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <div class="section-label">What's Coming</div>
+          <h2 class="section-title" style="font-size:clamp(1.8rem,3vw,2.8rem);">Upcoming Gatherings</h2>
+        </div>
+        <a href="events.html" class="btn-secondary" style="margin-bottom:1rem;">All Events →</a>
+      </div>
+
+      <div class="event-list">
+        <a href="glory-encounter.html" class="event-row fade-up">
+          <div class="event-date-box">
+            <div class="event-date-month">AUG</div>
+            <div class="event-date-day">14</div>
+          </div>
+          <div>
+            <div class="event-name">Glory Encounter 2025</div>
+            <div class="event-loc">📍 Nairobi, Kenya · 7 Days 24/7</div>
+          </div>
+          <span class="badge event-tag">Register Now</span>
+        </a>
+        <a href="adullam.html" class="event-row fade-up delay-1">
+          <div class="event-date-box">
+            <div class="event-date-month">JUN</div>
+            <div class="event-date-day">07</div>
+          </div>
+          <div>
+            <div class="event-name">Adullam Saturday Night Vigil</div>
+            <div class="event-loc">📍 Every Saturday · Sanctuary</div>
+          </div>
+          <span class="badge event-tag">Weekly</span>
+        </a>
+        <a href="events.html" class="event-row fade-up delay-2">
+          <div class="event-date-box">
+            <div class="event-date-month">SEP</div>
+            <div class="event-date-day">20</div>
+          </div>
+          <div>
+            <div class="event-name">Global Worship Conference — Africa</div>
+            <div class="event-loc">📍 Nairobi, Kenya · 7 Days</div>
+          </div>
+          <span class="badge event-tag">Soon</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-glow"></div>
+    <div class="container" style="position:relative; z-index:2;">
+      <div class="fade-up">
+        <div class="ornament">
+          <div class="ornament-line"></div>
+          ✦
+          <div class="ornament-line"></div>
+        </div>
+        <h2 class="section-title" style="font-size:clamp(2rem,4vw,3.5rem); margin-bottom:1.5rem;">
+          Partner With the Vision
+        </h2>
+        <p class="section-subtitle" style="margin:0 auto 3rem; text-align:center;">
+          "Partner with us in hosting God's presence and spreading revival across nations."
+        </p>
+        <div style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;">
+          <a href="give.html" class="btn-primary">Support the Ministry</a>
+          <a href="invite.html" class="btn-secondary">Invite Tehillah</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+
+  <script src="layout.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

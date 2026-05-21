@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Revival Release — Tehillah Movement</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .rr-hero {
+      min-height:90vh; display:flex; align-items:center; justify-content:center;
+      text-align:center; padding:8rem 2rem 4rem; position:relative; overflow:hidden;
+    }
+    .rr-hero-bg {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.11) 0%, transparent 65%),
+        linear-gradient(180deg, #06091A 0%, #0A0E22 100%);
+    }
+    .rr-number {
+      font-family:'Cinzel',serif; font-size:clamp(8rem,20vw,18rem); font-weight:700;
+      color:rgba(201,168,76,0.06); line-height:1; position:absolute;
+      top:50%; left:50%; transform:translate(-50%,-50%); white-space:nowrap; pointer-events:none;
+    }
+    .rr-hero-content { position:relative; z-index:2; max-width:800px; }
+    .rr-badge { display:inline-block; padding:0.5rem 1.5rem; border:1px solid var(--gold); font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.3em; color:var(--gold); margin-bottom:2rem; }
+    .rr-title { font-family:'Cinzel',serif; font-size:clamp(3rem,7vw,6rem); line-height:1.05; }
+    .rr-title span { color:var(--gold); display:block; }
+
+    /* LIVE STATUS BAR */
+    .live-bar { background:rgba(201,168,76,0.06); border-top:1px solid rgba(201,168,76,0.12); border-bottom:1px solid rgba(201,168,76,0.12); padding:1.5rem 4rem; }
+    .live-bar-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+    .live-status { display:flex; align-items:center; gap:0.8rem; font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.15em; }
+    .live-dot-red { width:10px; height:10px; border-radius:50%; background:#FF6B6B; animation:pulse-red 1.5s infinite; flex-shrink:0; }
+    .live-bar-stats { display:flex; gap:3rem; flex-wrap:wrap; }
+    .live-stat { text-align:center; }
+    .live-stat-num { font-family:'Cinzel',serif; font-size:1.5rem; color:var(--gold); display:block; line-height:1; }
+    .live-stat-label { font-size:0.65rem; color:var(--white-dim); letter-spacing:0.1em; font-family:'Cinzel',serif; }
+
+    /* VISION */
+    .vision-section { padding:7rem 4rem; background:var(--navy-mid); }
+    .vision-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; margin-top:4rem; }
+
+    /* GLOBAL MAP PLACEHOLDER */
+    .map-section { padding:6rem 4rem; background:var(--navy); text-align:center; }
+    .global-map {
+      width:100%; height:500px; border:1px solid rgba(201,168,76,0.15);
+      background:linear-gradient(135deg, var(--navy-light), var(--accent));
+      display:flex; align-items:center; justify-content:center;
+      flex-direction:column; gap:1.5rem; margin-top:3rem; position:relative; overflow:hidden;
+    }
+    .map-dots {
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(3px 3px at 20% 40%, var(--gold) 0%, transparent 100%),
+        radial-gradient(3px 3px at 35% 30%, var(--gold) 0%, transparent 100%),
+        radial-gradient(3px 3px at 50% 45%, var(--gold) 0%, transparent 100%),
+        radial-gradient(3px 3px at 65% 25%, var(--gold) 0%, transparent 100%),
+        radial-gradient(3px 3px at 78% 50%, var(--gold) 0%, transparent 100%),
+        radial-gradient(3px 3px at 15% 60%, var(--gold) 0%, transparent 100%),
+        radial-gradient(3px 3px at 88% 35%, var(--gold) 0%, transparent 100%),
+        radial-gradient(3px 3px at 42% 70%, var(--gold) 0%, transparent 100%);
+      opacity:0.5;
+    }
+    .map-inner { position:relative; z-index:2; text-align:center; }
+
+    /* SCHEDULE BOOKING */
+    .schedule-section { padding:7rem 4rem; background:var(--navy-mid); }
+    .schedule-booking-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; margin-top:4rem; }
+    .watch-slot {
+      padding:1.5rem; border:1px solid rgba(201,168,76,0.13);
+      display:flex; justify-content:space-between; align-items:center; gap:1rem;
+      margin-bottom:0.8rem; transition:all 0.3s; cursor:pointer;
+    }
+    .watch-slot:hover { border-color:rgba(201,168,76,0.35); background:rgba(201,168,76,0.04); }
+    .watch-slot-time { font-family:'Cinzel',serif; font-size:0.75rem; color:var(--gold); }
+    .watch-slot-name { font-family:'Cinzel',serif; font-size:0.9rem; color:var(--white); margin-top:0.2rem; }
+    .watch-slot-status { font-size:0.72rem; color:var(--white-dim); }
+    .watch-slot-btn { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em; padding:0.4rem 1rem; border:1px solid var(--gold); color:var(--gold); background:transparent; cursor:pointer; white-space:nowrap; transition:all 0.3s; }
+    .watch-slot-btn:hover { background:var(--gold); color:var(--navy); }
+
+    /* TEAMS */
+    .teams-section { padding:7rem 4rem; background:var(--navy); }
+    .teams-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:4rem; }
+    .team-card { padding:2rem; border:1px solid rgba(201,168,76,0.12); transition:all 0.4s; }
+    .team-card:hover { border-color:rgba(201,168,76,0.35); }
+    .team-flag { font-size:2rem; margin-bottom:0.8rem; display:block; }
+    .team-name { font-family:'Cinzel',serif; font-size:1rem; color:var(--white); margin-bottom:0.3rem; }
+    .team-loc { font-size:0.82rem; color:var(--gold); }
+    .team-watch { font-size:0.78rem; color:var(--white-dim); margin-top:0.3rem; }
+
+    @keyframes pulse-red { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:0.5; transform:scale(1.3)} }
+    @media(max-width:1024px){
+      .vision-grid,.schedule-booking-grid { grid-template-columns:1fr; gap:3rem; }
+      .teams-grid { grid-template-columns:repeat(2,1fr); }
+      .live-bar,.vision-section,.map-section,.schedule-section,.teams-section { padding:4rem 2rem; }
+    }
+    @media(max-width:768px){
+      .teams-grid { grid-template-columns:1fr; }
+      .live-bar-stats { gap:1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="rr-hero">
+    <div class="rr-hero-bg"></div>
+    <div class="hero-particles"></div>
+    <div class="rr-number">365</div>
+    <div class="rr-hero-content">
+      <div class="rr-badge">365 DAYS · 24/7 · CONTINUOUS WORSHIP</div>
+      <h1 class="rr-title">Revival<span>Release</span></h1>
+      <p style="font-family:'Cormorant Garamond',serif; font-style:italic; font-size:clamp(1.1rem,2vw,1.6rem); color:var(--white-dim); margin:1.5rem 0 3rem;">
+        "Unceasing worship and intercession that releases revival across cities and nations — every hour, every day, all year."
+      </p>
+      <div style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap;">
+        <a href="#booking" class="btn-primary">Book a Worship Watch</a>
+        <a href="media.html" class="btn-secondary">▶ Watch the Stream</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE STATUS BAR -->
+  <div class="live-bar">
+    <div class="container">
+      <div class="live-bar-inner">
+        <div class="live-status">
+          <span class="live-dot-red"></span>
+          <span style="color:#FF8888;">REVIVAL RELEASE IS LIVE</span>
+          <span style="color:var(--white-dim);">— Currently in Evening Watch</span>
+        </div>
+        <div class="live-bar-stats">
+          <div class="live-stat"><span class="live-stat-num">247</span><span class="live-stat-label">DAYS RUNNING</span></div>
+          <div class="live-stat"><span class="live-stat-num">1,840</span><span class="live-stat-label">WORSHIPPERS SERVED</span></div>
+          <div class="live-stat"><span class="live-stat-num">14</span><span class="live-stat-label">NATIONS REPRESENTED</span></div>
+          <div class="live-stat"><span class="live-stat-num">24/7</span><span class="live-stat-label">HOURS ACTIVE</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VISION -->
+  <section class="vision-section">
+    <div class="container">
+      <div class="vision-grid">
+        <div class="fade-up">
+          <div class="section-label">The Vision</div>
+          <h2 class="section-title" style="font-size:clamp(2rem,3.5vw,3rem);">365 Days of<br>Unceasing Worship</h2>
+          <p style="color:var(--white-dim); font-size:1rem; line-height:1.9; margin-bottom:1.5rem;">
+            Revival Release is a 365-day, 24/7 worship movement dedicated to establishing unceasing worship and intercession before the throne of God — believing that sustained worship releases sustained revival across cities and nations.
+          </p>
+          <p style="color:var(--white-dim); font-size:1rem; line-height:1.9; margin-bottom:2rem;">
+            Inspired by the Davidic model and the heavenly pattern of continuous worship in Revelation 4, we are raising a company of worshippers who will not stop until the knowledge of God's glory covers the earth.
+          </p>
+          <a href="#booking" class="btn-secondary">Join a Worship Watch</a>
+        </div>
+        <div class="fade-up delay-2">
+          <div class="scripture">
+            "And the four living creatures, each of them with six wings, are full of eyes all around and within, and day and night they never cease to say, 'Holy, holy, holy, is the Lord God Almighty.'"
+            <cite>Revelation 4:8</cite>
+          </div>
+          <div style="margin-top:2rem; display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+            <div style="padding:1.5rem; border:1px solid rgba(201,168,76,0.12); text-align:center;">
+              <div style="font-family:'Cinzel',serif; font-size:2rem; color:var(--gold);">24</div>
+              <div style="font-size:0.78rem; color:var(--white-dim); font-family:'Cinzel',serif; letter-spacing:0.1em;">HOURS/DAY</div>
+            </div>
+            <div style="padding:1.5rem; border:1px solid rgba(201,168,76,0.12); text-align:center;">
+              <div style="font-family:'Cinzel',serif; font-size:2rem; color:var(--gold);">365</div>
+              <div style="font-size:0.78rem; color:var(--white-dim); font-family:'Cinzel',serif; letter-spacing:0.1em;">DAYS/YEAR</div>
+            </div>
+            <div style="padding:1.5rem; border:1px solid rgba(201,168,76,0.12); text-align:center;">
+              <div style="font-family:'Cinzel',serif; font-size:2rem; color:var(--gold);">8,760</div>
+              <div style="font-size:0.78rem; color:var(--white-dim); font-family:'Cinzel',serif; letter-spacing:0.1em;">HOURS OF WORSHIP</div>
+            </div>
+            <div style="padding:1.5rem; border:1px solid rgba(201,168,76,0.12); text-align:center;">
+              <div style="font-family:'Cinzel',serif; font-size:2rem; color:var(--gold);">∞</div>
+              <div style="font-size:0.78rem; color:var(--white-dim); font-family:'Cinzel',serif; letter-spacing:0.1em;">IMPACT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GLOBAL PRAYER MAP -->
+  <section class="map-section">
+    <div class="container">
+      <div class="fade-up">
+        <div class="section-label">Covering the Earth</div>
+        <h2 class="section-title">Global Prayer Map</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Worshippers from these nations are currently participating in Revival Release.</p>
+      </div>
+      <div class="global-map fade-up">
+        <div class="map-dots"></div>
+        <div class="map-inner">
+          <div style="font-size:3rem; margin-bottom:1rem;">🌍</div>
+          <div style="font-family:'Cinzel',serif; font-size:0.85rem; letter-spacing:0.2em; color:var(--gold); margin-bottom:0.5rem;">GLOBAL PRAYER COVERAGE</div>
+          <div style="color:var(--white-dim); font-size:0.9rem;">Kenya · Uganda · Tanzania · Nigeria · South Africa · UK · USA · Rwanda · Ethiopia · Ghana · Germany · Australia · Brazil · India</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WATCH SCHEDULE & BOOKING -->
+  <section class="schedule-section" id="booking">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">Join the Watch</div>
+        <h2 class="section-title">Book a Worship Session</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Reserve a physical or virtual slot in any daily worship watch.</p>
+      </div>
+      <div class="schedule-booking-grid">
+        <!-- WATCH SLOTS -->
+        <div class="fade-up">
+          <h3 style="font-family:'Cinzel',serif; font-size:0.85rem; color:var(--gold); letter-spacing:0.15em; margin-bottom:1.5rem;">TODAY'S WATCHES</h3>
+          <div class="watch-slot">
+            <div><div class="watch-slot-time">06:00 – 08:00</div><div class="watch-slot-name">Morning Watch</div><div class="watch-slot-status">12 of 20 seats available</div></div>
+            <button class="watch-slot-btn">Book</button>
+          </div>
+          <div class="watch-slot">
+            <div><div class="watch-slot-time">10:00 – 12:00</div><div class="watch-slot-name">Midmorning Watch</div><div class="watch-slot-status">8 of 20 seats available</div></div>
+            <button class="watch-slot-btn">Book</button>
+          </div>
+          <div class="watch-slot">
+            <div><div class="watch-slot-time">14:00 – 16:00</div><div class="watch-slot-name">Afternoon Watch</div><div class="watch-slot-status">FULL — Virtual only</div></div>
+            <button class="watch-slot-btn" style="border-color:var(--white-dim); color:var(--white-dim);">Virtual</button>
+          </div>
+          <div class="watch-slot">
+            <div><div class="watch-slot-time">18:00 – 20:00</div><div class="watch-slot-name">Evening Watch</div><div class="watch-slot-status">17 of 20 seats available</div></div>
+            <button class="watch-slot-btn">Book</button>
+          </div>
+          <div class="watch-slot">
+            <div><div class="watch-slot-time">22:00 – 00:00</div><div class="watch-slot-name">Night Watch</div><div class="watch-slot-status">20 of 20 seats available</div></div>
+            <button class="watch-slot-btn">Book</button>
+          </div>
+          <div class="watch-slot">
+            <div><div class="watch-slot-time">00:00 – 02:00</div><div class="watch-slot-name">Midnight Watch</div><div class="watch-slot-status">20 of 20 seats available</div></div>
+            <button class="watch-slot-btn">Book</button>
+          </div>
+          <div class="watch-slot">
+            <div><div class="watch-slot-time">04:00 – 06:00</div><div class="watch-slot-name">Dawn Watch</div><div class="watch-slot-status">20 of 20 seats available</div></div>
+            <button class="watch-slot-btn">Book</button>
+          </div>
+        </div>
+
+        <!-- BOOKING FORM -->
+        <div class="fade-up delay-2">
+          <h3 style="font-family:'Cinzel',serif; font-size:0.85rem; color:var(--gold); letter-spacing:0.15em; margin-bottom:1.5rem;">RESERVE YOUR PLACE</h3>
+          <div class="form-group">
+            <label>Select Date</label>
+            <input type="date"/>
+          </div>
+          <div class="form-group">
+            <label>Watch Session</label>
+            <select>
+              <option>Morning Watch (06:00–08:00)</option>
+              <option>Midmorning Watch (10:00–12:00)</option>
+              <option>Afternoon Watch (14:00–16:00)</option>
+              <option>Evening Watch (18:00–20:00)</option>
+              <option>Night Watch (22:00–00:00)</option>
+              <option>Midnight Watch (00:00–02:00)</option>
+              <option>Pre-Dawn Watch (02:00–04:00)</option>
+              <option>Dawn Watch (04:00–06:00)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Attendance Type</label>
+            <select>
+              <option>Physical — In Sanctuary</option>
+              <option>Virtual — Online Participation</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your full name"/>
+          </div>
+          <div class="form-group">
+            <label>Phone / WhatsApp</label>
+            <input type="tel" placeholder="+254 700 000 000"/>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" placeholder="your@email.com"/>
+          </div>
+          <button class="btn-primary" style="width:100%;" onclick="alert('✅ Your watch session has been reserved! Confirmation sent to your email. See you in the sanctuary!')">Reserve My Watch</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORSHIP TEAMS -->
+  <section class="teams-section">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">The Worshippers</div>
+        <h2 class="section-title">Worship Teams Calendar</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Teams from across the nations rotating in the Revival Release watches.</p>
+      </div>
+      <div class="teams-grid">
+        <div class="team-card fade-up">
+          <span class="team-flag">🇰🇪</span>
+          <div class="team-name">Team Nairobi Alpha</div>
+          <div class="team-loc">Nairobi, Kenya</div>
+          <div class="team-watch">Morning & Dawn Watch — Weekdays</div>
+        </div>
+        <div class="team-card fade-up delay-1">
+          <span class="team-flag">🇺🇬</span>
+          <div class="team-name">Team Kampala</div>
+          <div class="team-loc">Kampala, Uganda</div>
+          <div class="team-watch">Evening Watch — Mon, Wed, Fri</div>
+        </div>
+        <div class="team-card fade-up delay-2">
+          <span class="team-flag">🇳🇬</span>
+          <div class="team-name">Team Lagos Fire</div>
+          <div class="team-loc">Lagos, Nigeria</div>
+          <div class="team-watch">Midnight Watch — Thursdays</div>
+        </div>
+        <div class="team-card fade-up">
+          <span class="team-flag">🇬🇧</span>
+          <div class="team-name">Team London</div>
+          <div class="team-loc">London, UK</div>
+          <div class="team-watch">Night Watch — Weekends</div>
+        </div>
+        <div class="team-card fade-up delay-1">
+          <span class="team-flag">🇰🇪</span>
+          <div class="team-name">Team Nairobi Beta</div>
+          <div class="team-loc">Nairobi, Kenya</div>
+          <div class="team-watch">Afternoon Watch — Daily</div>
+        </div>
+        <div class="team-card fade-up delay-2">
+          <span class="team-flag">➕</span>
+          <div class="team-name">Join as a Team</div>
+          <div class="team-loc" style="color:var(--white-dim);">Any Nation</div>
+          <div class="team-watch"><a href="volunteer.html" style="color:var(--gold); text-decoration:none;">Apply to join the watch →</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+  <script src="layout.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

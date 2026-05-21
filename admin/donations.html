@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Donations — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .chart-area { height:180px; display:flex; align-items:flex-end; gap:4px; padding:0 0 0; }
+    .chart-area .chart-bar { border-radius:3px 3px 0 0; min-height:4px; }
+    .method-badge { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.72rem; }
+    .method-icon { font-size:0.9rem; }
+    .donor-cell { display:flex; align-items:center; gap:0.7rem; }
+    .amount-cell { font-family:'Cinzel',serif; font-size:0.9rem; color:var(--gold-light); }
+    .top-donor-row { display:flex; align-items:center; gap:1rem; padding:0.8rem 0; border-bottom:1px solid rgba(201,168,76,0.07); }
+    .top-donor-row:last-child { border-bottom:none; }
+    .top-donor-rank { font-family:'Cinzel',serif; font-size:1.2rem; color:rgba(201,168,76,0.2); min-width:28px; }
+    .top-donor-info { flex:1; }
+    .top-donor-name { font-size:0.85rem; color:var(--white); }
+    .top-donor-type { font-size:0.72rem; color:var(--white-dim); }
+    .top-donor-amount { font-family:'Cinzel',serif; font-size:0.9rem; color:var(--gold); }
+    .fund-breakdown { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .fund-card { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:1.2rem; }
+    .fund-name { font-family:'Cinzel',serif; font-size:0.65rem; color:var(--white-dim); letter-spacing:0.1em; margin-bottom:0.5rem; }
+    .fund-amount { font-family:'Cinzel',serif; font-size:1.4rem; color:var(--white); margin-bottom:0.5rem; }
+    .grid-2-dash { display:grid; grid-template-columns:2fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+    @media(max-width:1024px){ .grid-2-dash { grid-template-columns:1fr; } .fund-breakdown { grid-template-columns:repeat(2,1fr); } }
+    @media(max-width:640px){ .fund-breakdown { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div><div class="admin-page-title">Donations & Giving</div><div class="breadcrumb"><a href="index.html">Dashboard</a> › Donations</div></div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-outline btn-sm" onclick="exportCSV('donationsTable','donations.csv')">⬇ Export CSV</button>
+        <button class="btn btn-gold btn-sm" onclick="openModal('addDonationModal')">➕ Record Gift</button>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- STAT CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-accent"></div><div class="stat-label">Total This Month (KES)</div><div class="stat-value" data-count="284500">0</div><div class="stat-change up">↑ 8% vs last month</div><div class="stat-icon">💰</div></div>
+        <div class="stat-card"><div class="stat-card-accent green"></div><div class="stat-label">Monthly Partners</div><div class="stat-value" data-count="42">0</div><div class="stat-change up">↑ 3 new this week</div><div class="stat-icon">♾</div></div>
+        <div class="stat-card"><div class="stat-card-accent blue"></div><div class="stat-label">One-Time Gifts</div><div class="stat-value" data-count="187">0</div><div class="stat-change up">↑ 12 today</div><div class="stat-icon">🎁</div></div>
+        <div class="stat-card"><div class="stat-card-accent red"></div><div class="stat-label">Avg. Gift (KES)</div><div class="stat-value" data-count="1521">0</div><div class="stat-change up">↑ 4% vs last month</div><div class="stat-icon">📈</div></div>
+      </div>
+
+      <!-- FUND BREAKDOWN -->
+      <div class="fund-breakdown">
+        <div class="fund-card"><div class="fund-name">GENERAL FUND</div><div class="fund-amount">KES 142,000</div><div class="progress"><div class="progress-bar" style="width:62%"></div></div><div style="font-size:0.72rem;color:var(--white-dim);margin-top:0.4rem;">62% of monthly target</div></div>
+        <div class="fund-card"><div class="fund-name">GLORY ENCOUNTER</div><div class="fund-amount">KES 88,500</div><div class="progress"><div class="progress-bar green" style="width:44%"></div></div><div style="font-size:0.72rem;color:var(--white-dim);margin-top:0.4rem;">44% of target</div></div>
+        <div class="fund-card"><div class="fund-name">MISSIONS</div><div class="fund-amount">KES 34,000</div><div class="progress"><div class="progress-bar" style="width:34%"></div></div><div style="font-size:0.72rem;color:var(--white-dim);margin-top:0.4rem;">34% of target</div></div>
+        <div class="fund-card"><div class="fund-name">EQUIPMENT</div><div class="fund-amount">KES 20,000</div><div class="progress"><div class="progress-bar" style="width:20%;background:linear-gradient(90deg,#3a6eb0,var(--info))"></div></div><div style="font-size:0.72rem;color:var(--white-dim);margin-top:0.4rem;">20% of target</div></div>
+        <div class="fund-card"><div class="fund-name">REVIVAL RELEASE</div><div class="fund-amount">KES 18,000</div><div class="progress"><div class="progress-bar" style="width:18%"></div></div><div style="font-size:0.72rem;color:var(--white-dim);margin-top:0.4rem;">18% of target</div></div>
+        <div class="fund-card"><div class="fund-name">CONFERENCE SPONSOR</div><div class="fund-amount">KES 50,000</div><div class="progress"><div class="progress-bar green" style="width:25%"></div></div><div style="font-size:0.72rem;color:var(--white-dim);margin-top:0.4rem;">25% of target</div></div>
+      </div>
+
+      <!-- CHART + TOP DONORS -->
+      <div class="grid-2-dash">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">Giving Trend — Last 30 Days</div>
+            <select class="filter-select" style="padding:0.3rem 0.6rem;font-size:0.72rem;"><option>Last 30 Days</option><option>Last 7 Days</option><option>This Year</option></select>
+          </div>
+          <div class="admin-card-body">
+            <div class="chart-area" id="donationsChart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:0.4rem;">
+              <span style="font-size:0.68rem;color:var(--white-dim)">Week 1</span>
+              <span style="font-size:0.68rem;color:var(--white-dim)">Week 2</span>
+              <span style="font-size:0.68rem;color:var(--white-dim)">Week 3</span>
+              <span style="font-size:0.68rem;color:var(--white-dim)">Week 4</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header"><div class="admin-card-title">Top Donors</div><span style="font-size:0.72rem;color:var(--white-dim);">This Month</span></div>
+          <div class="admin-card-body">
+            <div class="top-donor-row">
+              <div class="top-donor-rank">01</div>
+              <div class="avatar">J</div>
+              <div class="top-donor-info"><div class="top-donor-name">John Kamau</div><div class="top-donor-type">Monthly Partner</div></div>
+              <div class="top-donor-amount">KES 50,000</div>
+            </div>
+            <div class="top-donor-row">
+              <div class="top-donor-rank">02</div>
+              <div class="avatar">G</div>
+              <div class="top-donor-info"><div class="top-donor-name">Grace Muthoni</div><div class="top-donor-type">Conference Sponsor</div></div>
+              <div class="top-donor-amount">KES 30,000</div>
+            </div>
+            <div class="top-donor-row">
+              <div class="top-donor-rank">03</div>
+              <div class="avatar">A</div>
+              <div class="top-donor-info"><div class="top-donor-name">Anonymous</div><div class="top-donor-type">One-Time Gift</div></div>
+              <div class="top-donor-amount">KES 20,000</div>
+            </div>
+            <div class="top-donor-row">
+              <div class="top-donor-rank">04</div>
+              <div class="avatar">D</div>
+              <div class="top-donor-info"><div class="top-donor-name">David Njenga</div><div class="top-donor-type">Monthly Partner</div></div>
+              <div class="top-donor-amount">KES 10,000</div>
+            </div>
+            <div class="top-donor-row">
+              <div class="top-donor-rank">05</div>
+              <div class="avatar">F</div>
+              <div class="top-donor-info"><div class="top-donor-name">Faith Njeri</div><div class="top-donor-type">Monthly Partner</div></div>
+              <div class="top-donor-amount">KES 8,000</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRANSACTIONS TABLE -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">All Transactions</div>
+          <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV('donationsTable','donations.csv')">⬇ Export</button>
+          </div>
+        </div>
+        <div class="admin-card-body">
+          <div class="table-toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search donor name, reference…"/></div>
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+              <select class="filter-select"><option>All Methods</option><option>M-Pesa</option><option>Card</option><option>Bank Transfer</option><option>PayPal</option></select>
+              <select class="filter-select"><option>All Funds</option><option>General</option><option>Glory Encounter</option><option>Missions</option><option>Equipment</option></select>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="admin-table" id="donationsTable">
+              <thead>
+                <tr>
+                  <th>Ref #</th><th>Donor</th><th>Amount (KES)</th><th>Fund</th><th>Method</th><th>Type</th><th>Date</th><th>Status</th><th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="donationsTbody">
+              </tbody>
+            </table>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.2rem;flex-wrap:wrap;gap:0.8rem;">
+            <span style="font-size:0.78rem;color:var(--white-dim);">Showing 1–10 of 229 transactions</span>
+            <div style="display:flex;gap:0.5rem;">
+              <button class="btn btn-outline btn-sm">← Prev</button>
+              <button class="btn btn-gold btn-sm">1</button>
+              <button class="btn btn-outline btn-sm">2</button>
+              <button class="btn btn-outline btn-sm">Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD DONATION MODAL -->
+<div class="modal-overlay" id="addDonationModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Record Manual Donation</div><button class="modal-close" onclick="closeModal('addDonationModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Donor Name</label><input class="form-input" placeholder="Full name or Anonymous"/></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="donor@email.com"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Amount (KES)</label><input class="form-input" type="number" placeholder="0.00"/></div>
+        <div class="form-group"><label class="form-label">Payment Method</label><select class="form-select"><option>M-Pesa</option><option>Card</option><option>Bank Transfer</option><option>Cash</option><option>PayPal</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Fund</label><select class="form-select"><option>General</option><option>Glory Encounter</option><option>Missions</option><option>Equipment</option><option>Revival Release</option></select></div>
+        <div class="form-group"><label class="form-label">Giving Type</label><select class="form-select"><option>One-Time</option><option>Monthly Partner</option><option>Sponsorship</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Reference / Transaction ID</label><input class="form-input" placeholder="e.g. QGH8KLM or M-Pesa code"/></div>
+      <div class="form-group"><label class="form-label">Notes</label><textarea class="form-textarea" placeholder="Optional notes…"></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addDonationModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveDonation()">Record & Send Receipt</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+<script>
+const donations = [
+  { ref:'TH-D001', donor:'John Kamau', amount:'50,000', fund:'General', method:'M-Pesa', type:'Monthly', date:'May 19, 2025', status:'Completed' },
+  { ref:'TH-D002', donor:'Anonymous', amount:'5,000', fund:'Glory Encounter', method:'Card', type:'One-Time', date:'May 19, 2025', status:'Completed' },
+  { ref:'TH-D003', donor:'Grace Muthoni', amount:'30,000', fund:'Conference', method:'Bank Transfer', type:'Sponsorship', date:'May 18, 2025', status:'Completed' },
+  { ref:'TH-D004', donor:'Peter Odhiambo', amount:'2,000', fund:'Missions', method:'M-Pesa', type:'Monthly', date:'May 18, 2025', status:'Completed' },
+  { ref:'TH-D005', donor:'Faith Njeri', amount:'8,000', fund:'General', method:'M-Pesa', type:'Monthly', date:'May 17, 2025', status:'Completed' },
+  { ref:'TH-D006', donor:'Samuel Were', amount:'1,500', fund:'Equipment', method:'M-Pesa', type:'One-Time', date:'May 17, 2025', status:'Completed' },
+  { ref:'TH-D007', donor:'David Njenga', amount:'10,000', fund:'General', method:'Card', type:'Monthly', date:'May 16, 2025', status:'Completed' },
+  { ref:'TH-D008', donor:'Mercy Achieng', amount:'500', fund:'General', method:'M-Pesa', type:'One-Time', date:'May 16, 2025', status:'Pending' },
+  { ref:'TH-D009', donor:'Ruth Wanjiku', amount:'3,000', fund:'Glory Encounter', method:'PayPal', type:'One-Time', date:'May 15, 2025', status:'Completed' },
+  { ref:'TH-D010', donor:'Joseph Kibet', amount:'1,000', fund:'Missions', method:'M-Pesa', type:'One-Time', date:'May 15, 2025', status:'Completed' },
+];
+
+const methodIcon = { 'M-Pesa':'📱', 'Card':'💳', 'Bank Transfer':'🏦', 'PayPal':'🌐', 'Cash':'💵' };
+const statusBadge = s => s==='Completed'?'badge-green':'badge-gold';
+
+function renderDonations() {
+  document.getElementById('donationsTbody').innerHTML = donations.map(d => `
+    <tr>
+      <td style="font-family:'Cinzel',serif;font-size:0.7rem;color:var(--gold)">${d.ref}</td>
+      <td><div class="donor-cell"><div class="avatar avatar-sm">${d.donor[0]}</div><span>${d.donor}</span></div></td>
+      <td><span class="amount-cell">KES ${d.amount}</span></td>
+      <td style="color:var(--white-dim)">${d.fund}</td>
+      <td><span class="method-badge"><span class="method-icon">${methodIcon[d.method]||'💰'}</span>${d.method}</span></td>
+      <td style="color:var(--white-dim);font-size:0.78rem">${d.type}</td>
+      <td style="color:var(--white-dim)">${d.date}</td>
+      <td><span class="badge ${statusBadge(d.status)}">${d.status}</span></td>
+      <td>
+        <div style="display:flex;gap:0.4rem;">
+          <button class="btn btn-outline btn-icon btn-sm" onclick="showToast('Receipt sent to donor','success')" title="Send Receipt">📧</button>
+          <button class="btn btn-outline btn-icon btn-sm" onclick="showToast('Viewing transaction…','success')" title="View">👁</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function saveDonation() { closeModal('addDonationModal'); showToast('Donation recorded & receipt sent!','success'); }
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderDonations();
+  renderBarChart('donationsChart', [42000,38000,55000,48000,62000,70000,58000,49000,71000,85000,68000,74000,90000,84000,78000,92000,88000,96000,82000,75000,89000,93000,86000,79000,95000,91000,87000,98000,84500,88000]);
+});
+</script>
+</body>
+</html>
+
+<!-- Firebase live donations -->
+<script src="../config.js"></script>
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy, limit, serverTimestamp, addDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, user => { if (!user) window.location.href = 'login.html'; });
+
+  const methodIcon = { 'M-Pesa':'📱','Card':'💳','Bank Transfer':'🏦','PayPal':'🌐','Cash':'💵' };
+
+  async function loadDonations() {
+    const snap = await getDocs(query(collection(db,'donations'), orderBy('createdAt','desc'), limit(50)));
+    const data = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    const tbody = document.getElementById('donationsTbody');
+    if (!tbody) return;
+
+    // Update stat cards
+    const total = data.reduce((s,d) => s + (d.amount||0), 0);
+    const monthly = data.filter(d => d.type === 'Monthly Partner').length;
+    const oneTime = data.filter(d => d.type !== 'Monthly Partner').length;
+    const avg = data.length > 0 ? Math.round(total / data.length) : 0;
+
+    document.querySelectorAll('.stat-value[data-count]').forEach((el,i) => {
+      const vals = [total, monthly, oneTime, avg];
+      if (vals[i] !== undefined) el.textContent = vals[i].toLocaleString();
+    });
+
+    tbody.innerHTML = data.length === 0
+      ? `<tr><td colspan="9" style="text-align:center;color:var(--white-dim);padding:2rem;">No donations yet.</td></tr>`
+      : data.map((d,i) => `
+        <tr>
+          <td style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold)">${d.refId||`TH-D${i+1}`}</td>
+          <td><div style="display:flex;align-items:center;gap:.7rem;"><div class="avatar avatar-sm">${(d.name||'A')[0]}</div><span>${d.name||'Anonymous'}</span></div></td>
+          <td><span style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--gold-light);">KES ${(d.amount||0).toLocaleString()}</span></td>
+          <td style="color:var(--white-dim)">${d.fund||'General'}</td>
+          <td>${methodIcon[d.method]||'💰'} ${d.method||'—'}</td>
+          <td style="color:var(--white-dim);font-size:.78rem">${d.type||'One-Time'}</td>
+          <td style="color:var(--white-dim)">${d.createdAt?.toDate ? d.createdAt.toDate().toLocaleDateString() : '—'}</td>
+          <td><span class="badge ${d.status==='completed'?'badge-green':'badge-gold'}">${d.status||'pending'}</span></td>
+          <td><button class="btn btn-outline btn-icon btn-sm" onclick="showToast('Receipt resent!','success')" title="Resend Receipt">📧</button></td>
+        </tr>`).join('');
+  }
+
+  window.saveDonation = async () => {
+    closeModal('addDonationModal');
+    showToast('Donation recorded & receipt sent!','success');
+    loadDonations();
+  };
+
+  document.addEventListener('DOMContentLoaded', loadDonations);
+</script>

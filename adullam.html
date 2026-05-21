@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Adullam — Tehillah Movement</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .ad-hero {
+      min-height:85vh; display:flex; align-items:center; justify-content:center;
+      text-align:center; padding:8rem 2rem 4rem; position:relative; overflow:hidden;
+    }
+    .ad-hero-bg {
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 60%, rgba(201,168,76,0.09) 0%, transparent 65%),
+        radial-gradient(ellipse 80% 80% at 20% 20%, rgba(13,18,48,0.9) 0%, transparent 60%),
+        linear-gradient(180deg,#06091A 0%,#0D1230 100%);
+    }
+    .ad-hero-content { position:relative; z-index:2; max-width:750px; }
+    .ad-night-label {
+      font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.4em; color:var(--gold);
+      margin-bottom:1.5rem; display:flex; align-items:center; justify-content:center; gap:0.8rem;
+    }
+    .ad-title { font-family:'Cinzel',serif; font-size:clamp(3.5rem,9vw,8rem); line-height:0.9; }
+    .ad-subtitle {
+      font-family:'Cormorant Garamond',serif; font-style:italic;
+      font-size:clamp(1rem,2vw,1.5rem); color:var(--white-dim); margin:1.5rem 0;
+    }
+    .ad-detail {
+      display:flex; gap:2rem; justify-content:center; flex-wrap:wrap;
+      margin:2rem 0; font-family:'Cinzel',serif; font-size:0.7rem; letter-spacing:0.15em; color:var(--gold);
+    }
+    .ad-detail-item { display:flex; align-items:center; gap:0.5rem; color:var(--white-dim); }
+    .ad-detail-item span { color:var(--gold); }
+
+    .origin-section { padding:7rem 4rem; background:var(--navy-mid); }
+    .origin-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; margin-top:4rem; }
+    .origin-ref {
+      font-family:'Cinzel',serif; font-size:6rem; color:rgba(201,168,76,0.08); line-height:1;
+      display:block; margin-bottom:0.5rem;
+    }
+
+    .vigil-features { padding:7rem 4rem; background:var(--navy); }
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:4rem; }
+    .feature-item {
+      padding:2.5rem 2rem; border:1px solid rgba(201,168,76,0.13);
+      text-align:center; transition:all 0.4s;
+    }
+    .feature-item:hover { border-color:rgba(201,168,76,0.35); transform:translateY(-4px); background:rgba(201,168,76,0.03); }
+    .feature-icon { font-size:2.5rem; margin-bottom:1rem; display:block; }
+    .feature-title { font-family:'Cinzel',serif; font-size:1rem; color:var(--gold-light); margin-bottom:0.8rem; }
+    .feature-desc { font-size:0.88rem; color:var(--white-dim); line-height:1.8; }
+
+    .reg-section { padding:7rem 4rem; background:var(--navy-mid); }
+    .reg-grid { display:grid; grid-template-columns:1fr 1fr; gap:4rem; margin-top:4rem; }
+    .weekly-themes { }
+    .theme-row {
+      display:flex; gap:1.5rem; padding:1.2rem 0;
+      border-bottom:1px solid rgba(201,168,76,0.1);
+      align-items:flex-start;
+    }
+    .theme-date { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); white-space:nowrap; min-width:80px; }
+    .theme-title { font-size:0.9rem; color:var(--white); }
+    .theme-tag { font-size:0.75rem; color:var(--white-dim); }
+
+    .prayer-section { padding:7rem 4rem; background:var(--navy); }
+    .prayer-box {
+      max-width:700px; margin:4rem auto 0;
+      border:1px solid rgba(201,168,76,0.2); padding:3rem;
+      background:rgba(201,168,76,0.03);
+    }
+
+    .testimonies-section { padding:7rem 4rem; background:var(--navy-mid); }
+    .testi-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:2rem; margin-top:4rem; }
+    .testi-card {
+      padding:2.5rem; border:1px solid rgba(201,168,76,0.12);
+      position:relative; transition:all 0.4s;
+    }
+    .testi-card:hover { border-color:rgba(201,168,76,0.3); }
+    .testi-quote { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.1rem; color:var(--white-dim); line-height:1.8; margin-bottom:1.5rem; }
+    .testi-name { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); letter-spacing:0.1em; }
+
+    @media(max-width:1024px){
+      .origin-grid,.reg-grid { grid-template-columns:1fr; }
+      .features-grid { grid-template-columns:repeat(2,1fr); }
+      .testi-grid { grid-template-columns:1fr; }
+      .origin-section,.vigil-features,.reg-section,.prayer-section,.testimonies-section { padding:5rem 2rem; }
+    }
+    @media(max-width:768px){
+      .features-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="ad-hero">
+    <div class="ad-hero-bg"></div>
+    <div class="hero-particles"></div>
+    <div class="ad-hero-content">
+      <div class="ad-night-label">✦ EVERY SATURDAY NIGHT ✦</div>
+      <h1 class="ad-title gold">Adullam</h1>
+      <p class="ad-subtitle">"The Cave Where God Transforms You for His Purpose"</p>
+      <div class="ad-detail">
+        <div class="ad-detail-item"><span>📅</span> Every Saturday</div>
+        <div class="ad-detail-item"><span>🕙</span> 10:00 PM – Dawn</div>
+        <div class="ad-detail-item"><span>📍</span> Tehillah Sanctuary, Nairobi</div>
+      </div>
+      <div style="display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;">
+        <a href="#register" class="btn-primary">Register This Saturday</a>
+        <a href="media.html" class="btn-secondary">▶ Watch Online</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ORIGIN STORY -->
+  <section class="origin-section">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">The Inspiration</div>
+        <h2 class="section-title">The Cave of Adullam</h2>
+      </div>
+      <div class="origin-grid">
+        <div class="fade-up">
+          <span class="origin-ref">1 Sam 22</span>
+          <p style="color:var(--white-dim);font-size:1rem;line-height:1.9;margin-bottom:1.5rem;">
+            In 1 Samuel 22, David fled to the Cave of Adullam. There, the distressed, the indebted, and the discontented gathered to him — and he became their captain. God took broken people in a cave and transformed them into David's Mighty Men.
+          </p>
+          <p style="color:var(--white-dim);font-size:1rem;line-height:1.9;">
+            Adullam is that place for this generation. Every Saturday night, we open a sanctuary for those who are weary, spiritually hungry, and desperate for transformation. We believe that in the atmosphere of worship, prayer, and God's presence — God turns broken people into mighty vessels.
+          </p>
+        </div>
+        <div class="scripture fade-up delay-2" style="font-size:1.2rem;">
+          "Everyone who was in distress, everyone who was in debt, and everyone who was discontented gathered to him; and he became their commander."
+          <cite>1 Samuel 22:2</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHAT HAPPENS AT ADULLAM -->
+  <section class="vigil-features">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">What to Expect</div>
+        <h2 class="section-title">A Night of Encounter</h2>
+      </div>
+      <div class="features-grid">
+        <div class="feature-item fade-up">
+          <span class="feature-icon">🔥</span>
+          <div class="feature-title">Worship</div>
+          <p class="feature-desc">Deep, unscripted, Spirit-led worship that creates an atmosphere for God's presence to inhabit.</p>
+        </div>
+        <div class="feature-item fade-up delay-1">
+          <span class="feature-icon">🙏</span>
+          <div class="feature-title">Prayer</div>
+          <p class="feature-desc">Corporate and personal prayer, travailing intercession, and prophetic declarations over lives and nations.</p>
+        </div>
+        <div class="feature-item fade-up delay-2">
+          <span class="feature-icon">⚔️</span>
+          <div class="feature-title">Deliverance</div>
+          <p class="feature-desc">Ministering freedom and healing to those bound, broken, or spiritually oppressed.</p>
+        </div>
+        <div class="feature-item fade-up">
+          <span class="feature-icon">✋</span>
+          <div class="feature-title">Impartation</div>
+          <p class="feature-desc">Laying of hands, prophetic ministry, and the transferring of spiritual gifts and fire.</p>
+        </div>
+        <div class="feature-item fade-up delay-1">
+          <span class="feature-icon">📖</span>
+          <div class="feature-title">The Word</div>
+          <p class="feature-desc">Sharp, prophetic teaching that sharpens and equips vessels for their God-given purpose.</p>
+        </div>
+        <div class="feature-item fade-up delay-2">
+          <span class="feature-icon">👑</span>
+          <div class="feature-title">Transformation</div>
+          <p class="feature-desc">People come broken and leave as Mighty Men and Women — transformed by encounter with the Living God.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REGISTER + WEEKLY THEMES -->
+  <section class="reg-section" id="register">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">Join Us This Saturday</div>
+        <h2 class="section-title">Register & Weekly Themes</h2>
+      </div>
+      <div class="reg-grid">
+        <!-- REGISTRATION FORM -->
+        <div class="fade-up">
+          <h3 style="font-family:'Cinzel',serif; font-size:0.9rem; color:var(--gold); letter-spacing:0.15em; margin-bottom:1.5rem;">RESERVE YOUR SPOT</h3>
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" placeholder="Your full name"/>
+          </div>
+          <div class="form-group">
+            <label>Phone / WhatsApp</label>
+            <input type="tel" placeholder="+254 700 000 000"/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="your@email.com"/>
+          </div>
+          <div class="form-group">
+            <label>Attending With</label>
+            <select>
+              <option>Just Me</option>
+              <option>2 People</option>
+              <option>3–5 People</option>
+              <option>Group (6+)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Prayer Request (Optional)</label>
+            <textarea placeholder="Share what you'd like the team to pray over…"></textarea>
+          </div>
+          <button class="btn-primary" style="width:100%;">Register for This Saturday</button>
+        </div>
+
+        <!-- WEEKLY THEMES -->
+        <div class="weekly-themes fade-up delay-2">
+          <h3 style="font-family:'Cinzel',serif; font-size:0.9rem; color:var(--gold); letter-spacing:0.15em; margin-bottom:1.5rem;">UPCOMING THEMES</h3>
+          <div class="theme-row">
+            <div class="theme-date">JUN 7</div>
+            <div>
+              <div class="theme-title">The Sound of Heaven</div>
+              <div class="theme-tag">Worship · Prophetic Night</div>
+            </div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-date">JUN 14</div>
+            <div>
+              <div class="theme-title">Fire of the Altar</div>
+              <div class="theme-tag">Prayer · Intercession Focus</div>
+            </div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-date">JUN 21</div>
+            <div>
+              <div class="theme-title">Deliverance Night</div>
+              <div class="theme-tag">Freedom · Healing · Deliverance Ministry</div>
+            </div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-date">JUN 28</div>
+            <div>
+              <div class="theme-title">Glory & Consecration</div>
+              <div class="theme-tag">Holiness · Impartation</div>
+            </div>
+          </div>
+          <div class="theme-row">
+            <div class="theme-date">JUL 5</div>
+            <div>
+              <div class="theme-title">The Mighty Men Arise</div>
+              <div class="theme-tag">Commissioning · Purpose Night</div>
+            </div>
+          </div>
+
+          <div style="margin-top:2.5rem; padding:1.5rem; background:rgba(201,168,76,0.05); border:1px solid rgba(201,168,76,0.15);">
+            <div style="font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); margin-bottom:0.8rem; letter-spacing:0.15em;">LOCATION & DIRECTIONS</div>
+            <p style="font-size:0.9rem; color:var(--white-dim); line-height:1.8;">
+              📍 Tehillah Sanctuary, Nairobi<br>
+              🕙 Gates open at 9:30 PM<br>
+              🚌 Shuttle from CBD available — contact us to book<br>
+              🚗 Ample parking on-site
+            </p>
+            <a href="contact.html" class="btn-secondary" style="margin-top:1.5rem; display:inline-block; padding:0.7rem 1.5rem; font-size:0.65rem;">Get Directions →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRAYER REQUEST -->
+  <section class="prayer-section">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">We're Standing With You</div>
+        <h2 class="section-title">Submit a Prayer Request</h2>
+      </div>
+      <div class="prayer-box fade-up">
+        <div class="form-group">
+          <label>Your Name (or Anonymous)</label>
+          <input type="text" placeholder="Your name or leave blank for anonymous"/>
+        </div>
+        <div class="form-group">
+          <label>Your Prayer Request</label>
+          <textarea style="min-height:150px;" placeholder="Share your prayer request here. Our intercessory team reads and prays over every request received…"></textarea>
+        </div>
+        <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem;">
+          <input type="checkbox" id="anon" style="width:auto;"/>
+          <label for="anon" style="font-family:inherit; font-size:0.85rem; color:var(--white-dim); letter-spacing:0; margin:0;">Submit anonymously</label>
+        </div>
+        <button class="btn-primary">Submit Prayer Request</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIES -->
+  <section class="testimonies-section">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">What God Has Done</div>
+        <h2 class="section-title">Testimonies from Adullam</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card fade-up">
+          <p class="testi-quote">"I came to Adullam broken and suicidal. That night, the presence of God consumed me in worship and I was completely set free. Today I am whole."</p>
+          <div class="testi-name">— NAIROBI, KENYA</div>
+        </div>
+        <div class="testi-card fade-up delay-1">
+          <p class="testi-quote">"I had been in a spiritual drought for three years. One Saturday night in that cave of worship changed everything. The fire of God fell on me again."</p>
+          <div class="testi-name">— KAMPALA, UGANDA</div>
+        </div>
+        <div class="testi-card fade-up delay-2">
+          <p class="testi-quote">"I was delivered from a seven-year addiction at Adullam. They prayed over me and God met me in a way I had never experienced. Glory to His name."</p>
+          <div class="testi-name">— MOMBASA, KENYA</div>
+        </div>
+        <div class="testi-card fade-up delay-3">
+          <p class="testi-quote">"I received a prophetic word at Adullam that confirmed my calling. Three months later, everything spoken over me began to manifest. God is faithful."</p>
+          <div class="testi-name">— LAGOS, NIGERIA</div>
+        </div>
+      </div>
+      <div style="text-align:center; margin-top:3rem;">
+        <a href="prayer.html" class="btn-secondary">Share Your Testimony →</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+  <script src="layout.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

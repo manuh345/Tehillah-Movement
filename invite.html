@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Invite Tehillah — Tehillah Movement</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .page-hero { min-height:60vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:8rem 2rem 4rem; position:relative; overflow:hidden; }
+    .page-hero-bg { position:absolute; inset:0; background:radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,168,76,0.1) 0%, transparent 65%), var(--navy); }
+    .page-hero-content { position:relative; z-index:2; max-width:750px; }
+
+    .invite-section { padding:7rem 4rem; background:var(--navy-mid); }
+    .invite-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:5rem; margin-top:4rem; }
+
+    .what-we-bring { padding:7rem 4rem; background:var(--navy); }
+    .bring-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:4rem; }
+    .bring-card { padding:2.5rem 2rem; border:1px solid rgba(201,168,76,0.13); transition:all 0.4s; text-align:center; }
+    .bring-card:hover { border-color:rgba(201,168,76,0.4); transform:translateY(-4px); background:rgba(201,168,76,0.03); }
+    .bring-icon { font-size:2.5rem; margin-bottom:1.2rem; display:block; }
+    .bring-title { font-family:'Cinzel',serif; font-size:1rem; color:var(--gold-light); margin-bottom:0.8rem; }
+    .bring-desc { font-size:0.88rem; color:var(--white-dim); line-height:1.8; }
+
+    .past-section { padding:6rem 4rem; background:var(--navy-mid); }
+    .past-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-top:4rem; }
+    .past-card { padding:2rem 1.5rem; border:1px solid rgba(201,168,76,0.12); text-align:center; }
+    .past-country { font-family:'Cinzel',serif; font-size:1.5rem; color:var(--gold); display:block; margin-bottom:0.5rem; }
+    .past-city { font-family:'Cinzel',serif; font-size:0.8rem; color:var(--white-dim); letter-spacing:0.1em; }
+
+    @media(max-width:1024px){
+      .invite-grid { grid-template-columns:1fr; gap:3rem; }
+      .bring-grid { grid-template-columns:repeat(2,1fr); }
+      .past-grid { grid-template-columns:repeat(2,1fr); }
+      .invite-section,.what-we-bring,.past-section { padding:5rem 2rem; }
+    }
+    @media(max-width:768px){
+      .bring-grid { grid-template-columns:1fr; }
+      .past-grid { grid-template-columns:repeat(2,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="hero-particles"></div>
+    <div class="page-hero-content fade-up">
+      <div class="section-label">Bring the Fire</div>
+      <h1 style="font-family:'Cinzel',serif; font-size:clamp(2.5rem,6vw,5rem);">Invite <span class="gold">Tehillah</span></h1>
+      <p class="section-subtitle" style="margin:1rem auto 0; font-family:'Cormorant Garamond',serif; font-style:italic;">
+        "Let us bring the presence of God to your city, campus, church, or nation."
+      </p>
+    </div>
+  </section>
+
+  <!-- WHAT WE BRING -->
+  <section class="what-we-bring">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">What to Expect</div>
+        <h2 class="section-title">What We Bring</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Every invitation is answered with excellence, spirit, and the fire of God.</p>
+      </div>
+      <div class="bring-grid">
+        <div class="bring-card fade-up">
+          <span class="bring-icon">🎵</span>
+          <div class="bring-title">Worship Experience</div>
+          <p class="bring-desc">World-class worship team that builds an atmosphere of God's manifest presence through live music and song.</p>
+        </div>
+        <div class="bring-card fade-up delay-1">
+          <span class="bring-icon">🔥</span>
+          <div class="bring-title">Revival Fire</div>
+          <p class="bring-desc">Prophetic ministry, healing, deliverance, and impartation that ignites revival fire in your community.</p>
+        </div>
+        <div class="bring-card fade-up delay-2">
+          <span class="bring-icon">📖</span>
+          <div class="bring-title">The Word of God</div>
+          <p class="bring-desc">Sharp, anointed preaching and teaching that equips, corrects, and transforms lives.</p>
+        </div>
+        <div class="bring-card fade-up">
+          <span class="bring-icon">🙏</span>
+          <div class="bring-title">Intercession & Prayer</div>
+          <p class="bring-desc">Corporate and personal prayer that covers your city and contends for breakthrough and awakening.</p>
+        </div>
+        <div class="bring-card fade-up delay-1">
+          <span class="bring-icon">🌍</span>
+          <div class="bring-title">Global Perspective</div>
+          <p class="bring-desc">A movement that connects your local gathering to a global wave of worship and revival across nations.</p>
+        </div>
+        <div class="bring-card fade-up delay-2">
+          <span class="bring-icon">⚙️</span>
+          <div class="bring-title">Production Excellence</div>
+          <p class="bring-desc">Full technical and media support ensuring a high-quality, immersive experience for every attendee.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVITATION FORM -->
+  <section class="invite-section" id="invite-form">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">Send an Invitation</div>
+        <h2 class="section-title">Invite Tehillah to Your City</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Fill in the form below and our team will be in touch within 5–7 working days.</p>
+      </div>
+      <div class="invite-grid">
+        <!-- FORM -->
+        <div class="fade-up">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="First name"/>
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Last name"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Organization / Church Name</label>
+            <input type="text" placeholder="Your church, campus, or organization"/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" placeholder="your@email.com"/>
+          </div>
+          <div class="form-group">
+            <label>Phone / WhatsApp</label>
+            <input type="tel" placeholder="+254 700 000 000"/>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+            <div class="form-group">
+              <label>City</label>
+              <input type="text" placeholder="Your city"/>
+            </div>
+            <div class="form-group">
+              <label>Country</label>
+              <input type="text" placeholder="Your country"/>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Type of Event</label>
+            <select>
+              <option>Worship Night</option>
+              <option>Revival Conference (Multi-day)</option>
+              <option>Prayer & Intercession Gathering</option>
+              <option>Youth / Campus Event</option>
+              <option>Sunday Service</option>
+              <option>Adullam-style Night Vigil</option>
+              <option>City-wide Revival Crusade</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+            <div class="form-group">
+              <label>Preferred Date(s)</label>
+              <input type="text" placeholder="e.g. July 2025"/>
+            </div>
+            <div class="form-group">
+              <label>Expected Attendance</label>
+              <select>
+                <option>Under 100</option>
+                <option>100 – 500</option>
+                <option>500 – 1,000</option>
+                <option>1,000 – 5,000</option>
+                <option>5,000+</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Venue / Location Details</label>
+            <input type="text" placeholder="Name of venue or location"/>
+          </div>
+          <div class="form-group">
+            <label>Special Requests or Additional Notes</label>
+            <textarea placeholder="Share any special requests, vision for the gathering, or additional context…"></textarea>
+          </div>
+          <button class="btn-primary" style="width:100%;" onclick="submitInvite()">
+            Submit Invitation Request
+          </button>
+          <p style="font-size:0.78rem; color:var(--white-dim); text-align:center; margin-top:1rem;">
+            Our scheduling team will review your request and respond within 5–7 working days.
+          </p>
+        </div>
+
+        <!-- SIDE INFO -->
+        <div class="fade-up delay-2">
+          <div class="scripture" style="margin-bottom:2.5rem;">
+            "How beautiful are the feet of those who bring good news, who proclaim peace, who bring good tidings."
+            <cite>Romans 10:15</cite>
+          </div>
+          <h3 style="font-family:'Cinzel',serif; font-size:0.9rem; color:var(--gold); letter-spacing:0.15em; margin-bottom:1.5rem;">INVITATION PROCESS</h3>
+          <div style="display:flex; flex-direction:column; gap:1.5rem; margin-bottom:2.5rem;">
+            <div style="display:flex; gap:1.2rem; align-items:flex-start;">
+              <div style="width:28px; height:28px; border:1px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); flex-shrink:0;">1</div>
+              <div><strong style="color:var(--white); font-family:'Cinzel',serif; font-size:0.82rem; display:block; margin-bottom:0.3rem;">Submit Request</strong><span style="color:var(--white-dim); font-size:0.85rem;">Fill in the invitation form with your event details.</span></div>
+            </div>
+            <div style="display:flex; gap:1.2rem; align-items:flex-start;">
+              <div style="width:28px; height:28px; border:1px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); flex-shrink:0;">2</div>
+              <div><strong style="color:var(--white); font-family:'Cinzel',serif; font-size:0.82rem; display:block; margin-bottom:0.3rem;">Review & Response</strong><span style="color:var(--white-dim); font-size:0.85rem;">Our team reviews your invitation and responds within 5–7 days.</span></div>
+            </div>
+            <div style="display:flex; gap:1.2rem; align-items:flex-start;">
+              <div style="width:28px; height:28px; border:1px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); flex-shrink:0;">3</div>
+              <div><strong style="color:var(--white); font-family:'Cinzel',serif; font-size:0.82rem; display:block; margin-bottom:0.3rem;">Planning Call</strong><span style="color:var(--white-dim); font-size:0.85rem;">We schedule a call to discuss vision, logistics, dates, and requirements.</span></div>
+            </div>
+            <div style="display:flex; gap:1.2rem; align-items:flex-start;">
+              <div style="width:28px; height:28px; border:1px solid var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); flex-shrink:0;">4</div>
+              <div><strong style="color:var(--white); font-family:'Cinzel',serif; font-size:0.82rem; display:block; margin-bottom:0.3rem;">We Come!</strong><span style="color:var(--white-dim); font-size:0.85rem;">Tehillah arrives in your city to host His presence and release revival.</span></div>
+            </div>
+          </div>
+
+          <div style="padding:2rem; background:rgba(201,168,76,0.04); border:1px solid rgba(201,168,76,0.15);">
+            <div style="font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); margin-bottom:1rem; letter-spacing:0.15em;">DIRECT CONTACT</div>
+            <p style="font-size:0.88rem; color:var(--white-dim); line-height:1.8;">
+              For urgent bookings or large-scale events, reach us directly:<br><br>
+              📧 <a href="mailto:bookings@tehillahmovement.org" style="color:var(--gold-light);">bookings@tehillahmovement.org</a><br>
+              📱 <a href="https://wa.me/254700000000" style="color:var(--gold-light);">WhatsApp: +254 700 000 000</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHERE WE'VE BEEN -->
+  <section class="past-section">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">Our Footprint</div>
+        <h2 class="section-title">Where We've Carried the Fire</h2>
+      </div>
+      <div class="past-grid">
+        <div class="past-card fade-up"><span class="past-country">🇰🇪</span><div class="past-city">NAIROBI, KENYA</div></div>
+        <div class="past-card fade-up delay-1"><span class="past-country">🇺🇬</span><div class="past-city">KAMPALA, UGANDA</div></div>
+        <div class="past-card fade-up delay-2"><span class="past-country">🇹🇿</span><div class="past-city">DAR ES SALAAM, TANZANIA</div></div>
+        <div class="past-card fade-up delay-3"><span class="past-country">🇳🇬</span><div class="past-city">LAGOS, NIGERIA</div></div>
+        <div class="past-card fade-up"><span class="past-country">🇬🇧</span><div class="past-city">LONDON, UK</div></div>
+        <div class="past-card fade-up delay-1"><span class="past-country">🇺🇸</span><div class="past-city">WASHINGTON DC, USA</div></div>
+        <div class="past-card fade-up delay-2"><span class="past-country">🇷🇼</span><div class="past-city">KIGALI, RWANDA</div></div>
+        <div class="past-card fade-up delay-3"><span class="past-country">🌍</span><div class="past-city">YOUR CITY — NEXT</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+  <script src="layout.js"></script>
+  <script src="main.js"></script>
+  <script>
+    function submitInvite(){ alert('🙏 Thank you for your invitation! Our scheduling team will contact you within 5–7 working days. God bless you!'); }
+  </script>
+</body>
+</html>
+
+<!-- Firebase connection -->
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script type="module">
+  import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const app = initializeApp(TEHILLAH_CONFIG.firebase);
+  const db  = getFirestore(app);
+
+  // Override the static submitInvite from invite.html
+  window.submitInvite = async () => {
+    const org    = document.querySelector('input[placeholder*="church"]')?.value.trim() || document.querySelector('input[placeholder*="organization"]')?.value.trim() || '';
+    const email  = document.querySelector('input[type="email"]')?.value.trim() || '';
+    const name   = document.querySelector('input[placeholder*="First"]')?.value.trim() || '';
+    const type   = document.querySelector('select')?.value || '';
+
+    if (!name || !email) { alert('Please fill in your name and email address.'); return; }
+
+    try {
+      await addDoc(collection(db,'messages'), {
+        name, email, orgName: org, eventType: type,
+        type: 'invite', status: 'unread',
+        createdAt: serverTimestamp()
+      });
+
+      if (typeof emailjs !== 'undefined') {
+        emailjs.init(TEHILLAH_CONFIG.emailjs.publicKey);
+        emailjs.send(TEHILLAH_CONFIG.emailjs.serviceId, TEHILLAH_CONFIG.emailjs.templates.inviteReceived, {
+          to_name: name, to_email: email,
+          org_name: org, event_type: type,
+          location: '', dates: '',
+          ministry: TEHILLAH_CONFIG.site.name
+        }).catch(()=>{});
+      }
+
+      alert('🙏 Thank you for your invitation! Our scheduling team will contact you within 5–7 working days. God bless you!');
+    } catch(e) {
+      alert('Something went wrong. Please email us directly at bookings@tehillahmovement.org');
+    }
+  };
+</script>

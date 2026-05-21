@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Messages & Invites — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .inbox-layout { display:grid; grid-template-columns:300px 1fr; gap:0; height:calc(100vh - 64px - 4rem); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+    .inbox-list { border-right:1px solid var(--border); overflow-y:auto; background:var(--card-bg); }
+    .inbox-list-header { padding:1rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .inbox-list-title { font-family:'Cinzel',serif; font-size:0.72rem; letter-spacing:0.12em; color:var(--white); }
+    .inbox-tabs { display:flex; border-bottom:1px solid var(--border); }
+    .inbox-tab { flex:1; padding:0.7rem; text-align:center; font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.1em; color:var(--white-dim); cursor:pointer; border:none; background:none; border-bottom:2px solid transparent; transition:all 0.2s; }
+    .inbox-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+    .msg-item { padding:1rem; border-bottom:1px solid rgba(201,168,76,0.07); cursor:pointer; transition:background 0.2s; position:relative; }
+    .msg-item:hover, .msg-item.active { background:rgba(201,168,76,0.06); }
+    .msg-item.unread { border-left:2px solid var(--gold); }
+    .msg-item-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.3rem; }
+    .msg-item-name { font-size:0.83rem; color:var(--white); font-weight:500; }
+    .msg-item-time { font-size:0.68rem; color:var(--white-dim); }
+    .msg-item-subject { font-size:0.78rem; color:var(--gold); margin-bottom:0.2rem; }
+    .msg-item-preview { font-size:0.75rem; color:var(--white-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:240px; }
+    .inbox-detail { display:flex; flex-direction:column; overflow:hidden; }
+    .inbox-detail-header { padding:1.5rem; border-bottom:1px solid var(--border); }
+    .inbox-detail-subject { font-family:'Cinzel',serif; font-size:1rem; color:var(--white); margin-bottom:0.5rem; }
+    .inbox-detail-meta { display:flex; gap:1.5rem; flex-wrap:wrap; }
+    .inbox-detail-meta-item { font-size:0.78rem; color:var(--white-dim); display:flex; align-items:center; gap:0.4rem; }
+    .inbox-detail-meta-item span { color:var(--gold); }
+    .inbox-detail-body { flex:1; overflow-y:auto; padding:1.5rem; }
+    .msg-body-text { font-size:0.9rem; color:var(--white-dim); line-height:1.8; }
+    .inbox-detail-footer { padding:1rem 1.5rem; border-top:1px solid var(--border); display:flex; gap:0.8rem; flex-wrap:wrap; }
+    .reply-box { width:100%; padding:0.7rem 1rem; background:rgba(255,255,255,0.03); border:1px solid var(--border); color:var(--white); font-family:'Inter',sans-serif; font-size:0.85rem; border-radius:4px; outline:none; min-height:80px; resize:none; }
+    .reply-box:focus { border-color:var(--gold); }
+    .invite-detail-fields { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1.5rem 0; }
+    .field-item { }
+    .field-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.15em; color:var(--gold); margin-bottom:0.3rem; }
+    .field-val { font-size:0.85rem; color:var(--white); }
+    @media(max-width:900px){ .inbox-layout { grid-template-columns:1fr; height:auto; } .inbox-list { height:300px; } }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div><div class="admin-page-title">Messages & Invites</div><div class="breadcrumb"><a href="index.html">Dashboard</a> › Messages</div></div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-outline btn-sm" onclick="showToast('All marked as read','success')">✓ Mark All Read</button>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="admin-content" style="padding-bottom:0;">
+
+      <!-- STATS -->
+      <div class="stats-grid" style="margin-bottom:1.5rem;">
+        <div class="stat-card"><div class="stat-card-accent"></div><div class="stat-label">Total Messages</div><div class="stat-value" data-count="47">0</div><div class="stat-icon">✉</div></div>
+        <div class="stat-card"><div class="stat-card-accent red"></div><div class="stat-label">Unread</div><div class="stat-value" data-count="3">0</div><div class="stat-icon">🔴</div></div>
+        <div class="stat-card"><div class="stat-card-accent gold"></div><div class="stat-label">Invite Requests</div><div class="stat-value" data-count="12">0</div><div class="stat-icon">🌍</div></div>
+        <div class="stat-card"><div class="stat-card-accent green"></div><div class="stat-label">Replied</div><div class="stat-value" data-count="44">0</div><div class="stat-icon">✅</div></div>
+      </div>
+
+      <!-- INBOX LAYOUT -->
+      <div class="inbox-layout">
+
+        <!-- LIST -->
+        <div class="inbox-list">
+          <div class="inbox-list-header">
+            <div class="inbox-list-title">INBOX</div>
+            <div class="search-box" style="max-width:140px;padding:0.3rem 0.6rem;"><span style="font-size:0.8rem;">🔍</span><input type="text" placeholder="Search…" style="width:90px;"/></div>
+          </div>
+          <div class="inbox-tabs">
+            <button class="inbox-tab active" onclick="switchInboxTab(this)">Messages</button>
+            <button class="inbox-tab" onclick="switchInboxTab(this)">Invites</button>
+          </div>
+
+          <div class="msg-item unread active" onclick="showMsg(0)">
+            <div class="msg-item-header"><span class="msg-item-name">Calvary Church, Lagos</span><span class="msg-item-time">2h ago</span></div>
+            <div class="msg-item-subject">Invite Request — Revival Conference</div>
+            <div class="msg-item-preview">We would love to host Tehillah in Lagos for a…</div>
+          </div>
+          <div class="msg-item unread" onclick="showMsg(1)">
+            <div class="msg-item-header"><span class="msg-item-name">John Kariuki</span><span class="msg-item-time">5h ago</span></div>
+            <div class="msg-item-subject">General Inquiry — Partnership</div>
+            <div class="msg-item-preview">I run a worship ministry in Eldoret and would like…</div>
+          </div>
+          <div class="msg-item unread" onclick="showMsg(2)">
+            <div class="msg-item-header"><span class="msg-item-name">Grace Community Church</span><span class="msg-item-time">1d ago</span></div>
+            <div class="msg-item-subject">Invite Request — Worship Night</div>
+            <div class="msg-item-preview">We are planning a worship night in Mombasa…</div>
+          </div>
+          <div class="msg-item" onclick="showMsg(3)">
+            <div class="msg-item-header"><span class="msg-item-name">Media Team, BBC Africa</span><span class="msg-item-time">2d ago</span></div>
+            <div class="msg-item-subject">Press & Media Request</div>
+            <div class="msg-item-preview">We are covering revival movements across…</div>
+          </div>
+          <div class="msg-item" onclick="showMsg(4)">
+            <div class="msg-item-header"><span class="msg-item-name">Harvest Church UK</span><span class="msg-item-time">3d ago</span></div>
+            <div class="msg-item-subject">Invite Request — London Conference</div>
+            <div class="msg-item-preview">Following the Global Worship Conference…</div>
+          </div>
+          <div class="msg-item" onclick="showMsg(5)">
+            <div class="msg-item-header"><span class="msg-item-name">Paul Mwangi</span><span class="msg-item-time">4d ago</span></div>
+            <div class="msg-item-subject">Sponsorship Inquiry</div>
+            <div class="msg-item-preview">I have a business and would like to sponsor…</div>
+          </div>
+          <div class="msg-item" onclick="showMsg(6)">
+            <div class="msg-item-header"><span class="msg-item-name">Arise Ministries, Rwanda</span><span class="msg-item-time">5d ago</span></div>
+            <div class="msg-item-subject">Invite Request — Kigali Revival</div>
+            <div class="msg-item-preview">Rwanda is ready for revival. We would like…</div>
+          </div>
+        </div>
+
+        <!-- DETAIL -->
+        <div class="inbox-detail" id="inboxDetail">
+          <div class="inbox-detail-header">
+            <div class="inbox-detail-subject" id="detailSubject">Invite Request — Revival Conference, Lagos</div>
+            <div class="inbox-detail-meta">
+              <div class="inbox-detail-meta-item"><span>From:</span> Calvary Church, Lagos</div>
+              <div class="inbox-detail-meta-item"><span>Email:</span> admin@calvarychurch.ng</div>
+              <div class="inbox-detail-meta-item"><span>Phone:</span> +234 801 000 0000</div>
+              <div class="inbox-detail-meta-item"><span>Date:</span> May 19, 2025</div>
+            </div>
+          </div>
+
+          <div class="inbox-detail-body">
+            <div id="detailBody">
+              <div style="display:inline-flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+                <span class="badge badge-gold">Invite Request</span>
+                <span class="badge badge-red">Unread</span>
+                <span class="badge badge-blue">Revival Conference</span>
+              </div>
+              <div class="invite-detail-fields">
+                <div class="field-item"><div class="field-label">ORGANIZATION</div><div class="field-val">Calvary Church, Lagos</div></div>
+                <div class="field-item"><div class="field-label">LOCATION</div><div class="field-val">Lagos, Nigeria</div></div>
+                <div class="field-item"><div class="field-label">EVENT TYPE</div><div class="field-val">Revival Conference (Multi-day)</div></div>
+                <div class="field-item"><div class="field-label">EXPECTED ATTENDANCE</div><div class="field-val">1,000 – 5,000</div></div>
+                <div class="field-item"><div class="field-label">PREFERRED DATES</div><div class="field-val">October 2025</div></div>
+                <div class="field-item"><div class="field-label">VENUE</div><div class="field-val">Calvary Church Auditorium, VI</div></div>
+              </div>
+              <p class="msg-body-text">
+                "We would love to host Tehillah Movement in Lagos for a multi-day revival conference in October 2025. Our church seats 3,000 and we are expecting overflow attendance from across Lagos and neighboring states.<br><br>
+                We have been following the ministry for two years and believe this is a God-ordained connection. We are willing to handle all local logistics, accommodation, and transport for the Tehillah team.<br><br>
+                Please let us know your availability and what is required from our end to make this happen. We believe Lagos is ready for this revival fire."
+              </p>
+            </div>
+          </div>
+
+          <div class="inbox-detail-footer" style="flex-direction:column;">
+            <textarea class="reply-box" placeholder="Type your reply here…"></textarea>
+            <div style="display:flex;gap:0.8rem;justify-content:space-between;flex-wrap:wrap;">
+              <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+                <button class="btn btn-success btn-sm" onclick="showToast('Invite accepted & reply sent!','success')">✓ Accept Invite</button>
+                <button class="btn btn-danger btn-sm" onclick="showToast('Invite declined & reply sent','danger')">✕ Decline</button>
+                <button class="btn btn-outline btn-sm" onclick="showToast('Marked as follow-up','success')">⏱ Follow Up Later</button>
+              </div>
+              <button class="btn btn-gold btn-sm" onclick="showToast('Reply sent!','success')">Send Reply →</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="admin.js"></script>
+<script>
+  const messages = [
+    { subject:'Invite Request — Revival Conference, Lagos', from:'Calvary Church, Lagos', email:'admin@calvarychurch.ng', badge:'Invite Request', body:'We would love to host Tehillah in Lagos for a multi-day revival conference in October 2025.' },
+    { subject:'General Inquiry — Partnership', from:'John Kariuki', email:'john@worshipeldoret.org', badge:'Inquiry', body:'I run a worship ministry in Eldoret and would like to explore a partnership with Tehillah Movement.' },
+    { subject:'Invite Request — Worship Night, Mombasa', from:'Grace Community Church', email:'info@gracemombasa.org', badge:'Invite Request', body:'We are planning a worship night in Mombasa in September and would like Tehillah to minister.' },
+    { subject:'Press & Media Request', from:'Media Team, BBC Africa', email:'africa@bbc.co.uk', badge:'Press', body:'We are covering revival movements across Africa and would like to feature Tehillah Movement.' },
+    { subject:'Invite Request — London Conference', from:'Harvest Church UK', email:'info@harvestchurch.uk', badge:'Invite Request', body:'Following the Global Worship Conference announcement, we would like Tehillah to visit London.' },
+    { subject:'Sponsorship Inquiry', from:'Paul Mwangi', email:'paul@mwangienterprises.co.ke', badge:'Sponsorship', body:'I have a business and would like to sponsor Glory Encounter 2025 in Nairobi.' },
+    { subject:'Invite Request — Kigali Revival', from:'Arise Ministries, Rwanda', email:'arise@rwandarevival.rw', badge:'Invite Request', body:'Rwanda is ready for revival. We would like to invite Tehillah to Kigali for a three-day event.' },
+  ];
+
+  function showMsg(idx) {
+    const m = messages[idx];
+    document.querySelectorAll('.msg-item').forEach((el,i) => { el.classList.toggle('active', i===idx); });
+    document.getElementById('detailSubject').textContent = m.subject;
+    document.getElementById('detailBody').innerHTML = `
+      <div style="display:inline-flex;gap:0.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <span class="badge badge-gold">${m.badge}</span>
+        <span class="badge badge-grey">From: ${m.from}</span>
+      </div>
+      <p class="msg-body-text">"${m.body}"</p>`;
+    document.querySelector('.inbox-detail-header .inbox-detail-subject').textContent = m.subject;
+  }
+
+  function switchInboxTab(btn) {
+    document.querySelectorAll('.inbox-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
+
+<!-- Firebase live messages -->
+<script src="../config.js"></script>
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy,
+           updateDoc, deleteDoc, doc, where, limit }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, user => { if (!user) window.location.href = 'login.html'; });
+
+  let allMessages = [];
+
+  async function loadMessages() {
+    const snap = await getDocs(query(collection(db,'messages'), orderBy('createdAt','desc'), limit(50)));
+    allMessages = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+
+    const unread  = allMessages.filter(m => m.status==='unread').length;
+    const invites = allMessages.filter(m => m.type==='invite').length;
+    const statEls = document.querySelectorAll('.stat-value[data-count]');
+    if (statEls[0]) statEls[0].textContent = allMessages.length;
+    if (statEls[1]) statEls[1].textContent = unread;
+    if (statEls[2]) statEls[2].textContent = invites;
+    if (statEls[3]) statEls[3].textContent = allMessages.length - unread;
+
+    renderList(allMessages);
+    if (allMessages.length > 0) renderDetail(allMessages[0]);
+  }
+
+  function renderList(data) {
+    const list = document.querySelector('.inbox-list');
+    if (!list) return;
+    const existingHeader = list.querySelector('.inbox-list-header');
+    const existingTabs   = list.querySelector('.inbox-tabs');
+
+    // Remove old dynamic items
+    list.querySelectorAll('.msg-item').forEach(el => el.remove());
+
+    const items = data.map((m,i) => `
+      <div class="msg-item ${m.status==='unread'?'unread':''} ${i===0?'active':''}"
+           onclick="selectMsg('${m.id}')" id="mi-${m.id}">
+        <div class="msg-item-header">
+          <span class="msg-item-name">${m.name||m.orgName||'Unknown'}</span>
+          <span class="msg-item-time">${m.createdAt?.toDate?timeAgo(m.createdAt.toDate()):'—'}</span>
+        </div>
+        <div class="msg-item-subject">${m.subject||m.eventType||m.type||'Message'}</div>
+        <div class="msg-item-preview">${(m.message||m.why||'').slice(0,60)}…</div>
+      </div>`).join('');
+
+    list.insertAdjacentHTML('beforeend', items);
+  }
+
+  window.selectMsg = async (id) => {
+    const m = allMessages.find(x => x.id===id);
+    if (!m) return;
+    document.querySelectorAll('.msg-item').forEach(el => el.classList.remove('active'));
+    document.getElementById('mi-'+id)?.classList.add('active');
+    renderDetail(m);
+    if (m.status === 'unread') {
+      await updateDoc(doc(db,'messages',id), { status:'read' });
+      document.getElementById('mi-'+id)?.classList.remove('unread');
+    }
+  };
+
+  function renderDetail(m) {
+    const subjectEl = document.getElementById('detailSubject');
+    const bodyEl    = document.getElementById('detailBody');
+    if (!subjectEl || !bodyEl) return;
+    subjectEl.textContent = m.subject || m.eventType || (m.type==='invite'?'Invite Request':'Message');
+
+    // Update meta row
+    const metaEl = document.querySelector('.inbox-detail-meta');
+    if (metaEl) metaEl.innerHTML = `
+      <div class="inbox-detail-meta-item"><span>From:</span> ${m.name||m.orgName||'—'}</div>
+      <div class="inbox-detail-meta-item"><span>Email:</span> ${m.email||'—'}</div>
+      ${m.phone?`<div class="inbox-detail-meta-item"><span>Phone:</span> ${m.phone}</div>`:''}
+      <div class="inbox-detail-meta-item"><span>Date:</span> ${m.createdAt?.toDate?m.createdAt.toDate().toLocaleDateString():'—'}</div>`;
+
+    const typeLabel  = m.type==='invite'?'Invite Request':m.type==='contact'?'Contact Message':'Message';
+    const badgeClass = m.type==='invite'?'badge-gold':'badge-blue';
+
+    let fieldsHtml = '';
+    if (m.type==='invite') {
+      fieldsHtml = `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0;">
+          <div><div class="form-label">ORGANIZATION</div><div style="color:var(--white)">${m.orgName||'—'}</div></div>
+          <div><div class="form-label">LOCATION</div><div style="color:var(--white)">${m.location||'—'}</div></div>
+          <div><div class="form-label">EVENT TYPE</div><div style="color:var(--gold)">${m.eventType||'—'}</div></div>
+          <div><div class="form-label">ATTENDANCE</div><div style="color:var(--white)">${m.attendance||'—'}</div></div>
+          ${m.dates?`<div><div class="form-label">DATES</div><div style="color:var(--white)">${m.dates}</div></div>`:''}
+        </div>`;
+    }
+
+    bodyEl.innerHTML = `
+      <div style="display:inline-flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+        <span class="badge ${badgeClass}">${typeLabel}</span>
+        <span class="badge ${m.status==='unread'?'badge-gold':'badge-grey'}">${m.status==='unread'?'Unread':'Read'}</span>
+      </div>
+      ${fieldsHtml}
+      ${m.message||m.why?`<p class="msg-body-text">"${m.message||m.why}"</p>`:''}`;
+  }
+
+  function timeAgo(date) {
+    const diff = Date.now() - date.getTime();
+    const m = Math.floor(diff/60000);
+    if (m < 1)   return 'Just now';
+    if (m < 60)  return `${m}m ago`;
+    const h = Math.floor(m/60);
+    if (h < 24)  return `${h}h ago`;
+    return `${Math.floor(h/24)}d ago`;
+  }
+
+  window.switchInboxTab = (btn) => {
+    document.querySelectorAll('.inbox-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.textContent.trim().toLowerCase();
+    renderList(tab.includes('invite') ? allMessages.filter(m=>m.type==='invite') : allMessages);
+  };
+
+  document.addEventListener('DOMContentLoaded', loadMessages);
+</script>

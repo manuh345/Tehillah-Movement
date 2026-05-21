@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Volunteer & Serve — Tehillah Movement</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <style>
+    .page-hero{min-height:55vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+    .page-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(201,168,76,.1) 0%,transparent 65%),var(--navy-mid)}
+    .dept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem;margin-top:4rem}
+    .dept-card{padding:2rem 1.5rem;border:1px solid rgba(201,168,76,.13);text-align:center;cursor:pointer;transition:all .4s;background:transparent;position:relative}
+    .dept-card.selected,.dept-card:hover{border-color:var(--gold);background:rgba(201,168,76,.06)}
+    .dept-card.selected::after{content:'✓';position:absolute;top:.8rem;right:.8rem;font-size:.8rem;color:var(--gold)}
+    .apply-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:5rem;margin-top:4rem}
+    .values-row{display:flex;gap:3rem;justify-content:center;flex-wrap:wrap;margin-top:3rem}
+    .value-pill{text-align:center;max-width:200px}
+    .avail-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.5rem;margin-top:2rem}
+    .day-btn{padding:1.2rem .5rem;text-align:center;border:1px solid rgba(201,168,76,.15);cursor:pointer;transition:all .3s;background:transparent}
+    .day-btn.active,.day-btn:hover{border-color:var(--gold);background:rgba(201,168,76,.08)}
+    .finput{width:100%;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.25);color:var(--white);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;margin-bottom:1rem}
+    .finput:focus{border-color:var(--gold)}
+    .ftextarea{width:100%;padding:.85rem 1.1rem;background:rgba(255,255,255,.03);border:1px solid rgba(201,168,76,.25);color:var(--white);font-family:'Inter',sans-serif;font-size:.88rem;outline:none;resize:vertical;min-height:110px;margin-bottom:1rem}
+    .ftextarea:focus{border-color:var(--gold)}
+    .flabel{display:block;font-family:'Cinzel',serif;font-size:.63rem;letter-spacing:.15em;color:var(--gold);margin-bottom:.45rem}
+    .spinner-inline{display:inline-block;width:14px;height:14px;border:2px solid rgba(6,9,26,.3);border-top-color:var(--navy);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:.4rem}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .step-item{display:flex;gap:1.2rem;align-items:flex-start;margin-bottom:1.5rem}
+    .step-num{width:28px;height:28px;border:1px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);flex-shrink:0}
+    @media(max-width:1024px){.dept-grid{grid-template-columns:repeat(2,1fr)}.apply-grid{grid-template-columns:1fr;gap:3rem}.avail-grid{grid-template-columns:repeat(4,1fr)}}
+    @media(max-width:640px){.avail-grid{grid-template-columns:repeat(3,1fr)}}
+  </style>
+</head>
+<body>
+
+<section class="page-hero">
+  <div class="page-hero-bg"></div>
+  <div class="hero-particles"></div>
+  <div style="position:relative;z-index:2;max-width:700px;" class="fade-up">
+    <div class="section-label">Join the Team</div>
+    <h1 style="font-family:'Cinzel',serif;font-size:clamp(2.5rem,6vw,5rem);">Volunteer <span class="gold">&amp; Serve</span></h1>
+    <p class="section-subtitle" style="margin:1rem auto 0;font-family:'Cormorant Garamond',serif;font-style:italic;">"Every great move of God is carried on the shoulders of consecrated servants."</p>
+  </div>
+</section>
+
+<!-- WHY SERVE -->
+<section style="padding:6rem 4rem;background:var(--navy);">
+  <div class="container">
+    <div class="fade-up" style="text-align:center;"><div class="section-label">Why Serve</div><h2 class="section-title">Serving is Worship</h2></div>
+    <div class="values-row">
+      <div class="value-pill fade-up"><span style="font-size:2rem;margin-bottom:.8rem;display:block;">🔥</span><div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold-light);margin-bottom:.3rem;">Carry the Fire</div><p style="font-size:.8rem;color:var(--white-dim);line-height:1.6;">Serving in the house of God means releasing His presence over the nations.</p></div>
+      <div class="value-pill fade-up delay-1"><span style="font-size:2rem;margin-bottom:.8rem;display:block;">🌱</span><div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold-light);margin-bottom:.3rem;">Grow Spiritually</div><p style="font-size:.8rem;color:var(--white-dim);line-height:1.6;">Every volunteer receives training, mentorship, and impartation.</p></div>
+      <div class="value-pill fade-up delay-2"><span style="font-size:2rem;margin-bottom:.8rem;display:block;">🤝</span><div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold-light);margin-bottom:.3rem;">Build Community</div><p style="font-size:.8rem;color:var(--white-dim);line-height:1.6;">Serve shoulder-to-shoulder with a global family united in purpose.</p></div>
+      <div class="value-pill fade-up delay-3"><span style="font-size:2rem;margin-bottom:.8rem;display:block;">👑</span><div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--gold-light);margin-bottom:.3rem;">Be Raised Up</div><p style="font-size:.8rem;color:var(--white-dim);line-height:1.6;">Faithful servants are developed for greater Kingdom assignments.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEPARTMENTS -->
+<section style="padding:7rem 4rem;background:var(--navy-mid);">
+  <div class="container">
+    <div class="fade-up" style="text-align:center;"><div class="section-label">Where You Fit</div><h2 class="section-title">Ministry Departments</h2><p class="section-subtitle" style="margin:0 auto;">Click the departments you feel called to serve in.</p></div>
+    <div class="dept-grid" id="deptGrid">
+      <div class="dept-card fade-up" onclick="toggleDept(this,'Worship Team')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">🎵</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Worship Team</div><p style="font-size:.78rem;color:var(--white-dim);">Musicians, vocalists, and worship leaders.</p></div>
+      <div class="dept-card fade-up delay-1" onclick="toggleDept(this,'Intercession')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">🙏</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Intercession</div><p style="font-size:.78rem;color:var(--white-dim);">Prayer warriors covering the movement.</p></div>
+      <div class="dept-card fade-up delay-2" onclick="toggleDept(this,'Media & Production')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">📷</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Media &amp; Production</div><p style="font-size:.78rem;color:var(--white-dim);">Livestream, audio, video, social media.</p></div>
+      <div class="dept-card fade-up delay-3" onclick="toggleDept(this,'Hospitality')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">🏠</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Hospitality</div><p style="font-size:.78rem;color:var(--white-dim);">Welcoming guests and participants.</p></div>
+      <div class="dept-card fade-up" onclick="toggleDept(this,'Security')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">🛡️</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Security</div><p style="font-size:.78rem;color:var(--white-dim);">Safety and order during gatherings.</p></div>
+      <div class="dept-card fade-up delay-1" onclick="toggleDept(this,'Protocol & Ushering')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">📋</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Protocol &amp; Ushering</div><p style="font-size:.78rem;color:var(--white-dim);">Managing seating and session flow.</p></div>
+      <div class="dept-card fade-up delay-2" onclick="toggleDept(this,'Creative Team')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">🎨</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Creative Team</div><p style="font-size:.78rem;color:var(--white-dim);">Design, branding, stage sets, visual art.</p></div>
+      <div class="dept-card fade-up delay-3" onclick="toggleDept(this,'Technical Team')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">💻</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Technical Team</div><p style="font-size:.78rem;color:var(--white-dim);">Sound engineering, lighting, IT.</p></div>
+      <div class="dept-card fade-up" onclick="toggleDept(this,'Photography & Film')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">📸</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Photography &amp; Film</div><p style="font-size:.78rem;color:var(--white-dim);">Capturing what God is doing visually.</p></div>
+      <div class="dept-card fade-up delay-1" onclick="toggleDept(this,'Event Coordination')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">🗓️</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Event Coordination</div><p style="font-size:.78rem;color:var(--white-dim);">Planning and executing world-class events.</p></div>
+      <div class="dept-card fade-up delay-2" onclick="toggleDept(this,'Discipleship')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">📖</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Discipleship</div><p style="font-size:.78rem;color:var(--white-dim);">Mentoring new believers and volunteers.</p></div>
+      <div class="dept-card fade-up delay-3" onclick="toggleDept(this,'Missions & Outreach')"><span style="font-size:2rem;margin-bottom:1rem;display:block;">🌍</span><div style="font-family:'Cinzel',serif;font-size:.85rem;color:var(--white);margin-bottom:.4rem;">Missions &amp; Outreach</div><p style="font-size:.78rem;color:var(--white-dim);">Taking revival beyond our walls.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- AVAILABILITY -->
+<section style="padding:6rem 4rem;background:var(--navy);">
+  <div class="container">
+    <div class="fade-up" style="text-align:center;"><div class="section-label">Your Schedule</div><h2 class="section-title">When Can You Serve?</h2></div>
+    <div class="avail-grid fade-up" id="availGrid">
+      <button class="day-btn" onclick="toggleDay(this,'Sunday')"><span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--white-dim);display:block;">SUN</span></button>
+      <button class="day-btn" onclick="toggleDay(this,'Monday')"><span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--white-dim);display:block;">MON</span></button>
+      <button class="day-btn" onclick="toggleDay(this,'Tuesday')"><span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--white-dim);display:block;">TUE</span></button>
+      <button class="day-btn" onclick="toggleDay(this,'Wednesday')"><span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--white-dim);display:block;">WED</span></button>
+      <button class="day-btn" onclick="toggleDay(this,'Thursday')"><span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--white-dim);display:block;">THU</span></button>
+      <button class="day-btn" onclick="toggleDay(this,'Friday')"><span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--white-dim);display:block;">FRI</span></button>
+      <button class="day-btn active" onclick="toggleDay(this,'Saturday')"><span style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.1em;color:var(--gold);display:block;">SAT</span><span style="font-size:.7rem;color:var(--gold);">✓</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION FORM -->
+<section style="padding:7rem 4rem;background:var(--navy-mid);" id="apply">
+  <div class="container">
+    <div class="fade-up" style="text-align:center;"><div class="section-label">Ready to Serve?</div><h2 class="section-title">Apply to Volunteer</h2></div>
+    <div class="apply-grid">
+      <div class="fade-up">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+          <div><label class="flabel">First Name</label><input type="text" id="vFirstName" class="finput" placeholder="First name"/></div>
+          <div><label class="flabel">Last Name</label><input type="text" id="vLastName" class="finput" placeholder="Last name"/></div>
+        </div>
+        <label class="flabel">Email Address</label>
+        <input type="email" id="vEmail" class="finput" placeholder="your@email.com"/>
+        <label class="flabel">Phone / WhatsApp</label>
+        <input type="tel" id="vPhone" class="finput" placeholder="+254 700 000 000"/>
+        <label class="flabel">City &amp; Country</label>
+        <input type="text" id="vCity" class="finput" placeholder="e.g. Nairobi, Kenya"/>
+        <label class="flabel">Primary Department</label>
+        <select id="vDept" class="finput">
+          <option>Worship Team</option><option>Intercession</option><option>Media &amp; Production</option>
+          <option>Hospitality</option><option>Security</option><option>Protocol &amp; Ushering</option>
+          <option>Event Coordination</option><option>Photography &amp; Film</option>
+          <option>Creative Team</option><option>Technical Team</option>
+          <option>Discipleship</option><option>Missions &amp; Outreach</option>
+        </select>
+        <label class="flabel">Relevant Skills / Experience</label>
+        <textarea id="vSkills" class="ftextarea" placeholder="Briefly describe your skills and experience…"></textarea>
+        <label class="flabel">Why Do You Want to Serve at Tehillah?</label>
+        <textarea id="vWhy" class="ftextarea" placeholder="Share your heart…"></textarea>
+        <label class="flabel">Are you currently serving in a local church?</label>
+        <select id="vChurch" class="finput">
+          <option>Yes — actively serving</option><option>Yes — but not regularly</option><option>No — looking for a home</option>
+        </select>
+        <div id="vError" style="display:none;background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.3);color:#F08080;padding:.8rem 1rem;font-size:.82rem;margin-bottom:1rem;"></div>
+        <button class="btn-primary" id="vBtn" style="width:100%;" onclick="submitVolunteer()">Submit Volunteer Application</button>
+        <div id="vSuccess" style="display:none;margin-top:1rem;padding:1rem;background:rgba(76,175,132,.1);border:1px solid rgba(76,175,132,.3);color:#6FCFA6;font-size:.88rem;text-align:center;">🙏 Application submitted! Our team will be in touch within 3–5 days. Welcome to the family!</div>
+        <p style="font-size:.75rem;color:var(--white-dim);text-align:center;margin-top:1rem;">Our team will contact you within 3–5 working days.</p>
+      </div>
+      <div class="fade-up delay-2">
+        <div class="scripture" style="margin-bottom:2.5rem;">"And whatever you do, do it heartily, as to the Lord and not to men."<cite>Colossians 3:23</cite></div>
+        <h3 style="font-family:'Cinzel',serif;font-size:.88rem;color:var(--gold);letter-spacing:.15em;margin-bottom:1.5rem;">WHAT TO EXPECT</h3>
+        <div class="step-item"><div class="step-num">1</div><div><strong style="color:var(--white);font-family:'Cinzel',serif;font-size:.82rem;display:block;margin-bottom:.2rem;">Application Review</strong><span style="color:var(--white-dim);font-size:.85rem;">Our team reviews your application and matches you to the right department.</span></div></div>
+        <div class="step-item"><div class="step-num">2</div><div><strong style="color:var(--white);font-family:'Cinzel',serif;font-size:.82rem;display:block;margin-bottom:.2rem;">Welcome Call</strong><span style="color:var(--white-dim);font-size:.85rem;">A team lead will reach out via WhatsApp or phone to welcome you.</span></div></div>
+        <div class="step-item"><div class="step-num">3</div><div><strong style="color:var(--white);font-family:'Cinzel',serif;font-size:.82rem;display:block;margin-bottom:.2rem;">Onboarding</strong><span style="color:var(--white-dim);font-size:.85rem;">Attend a volunteer orientation and receive your schedule.</span></div></div>
+        <div class="step-item"><div class="step-num">4</div><div><strong style="color:var(--white);font-family:'Cinzel',serif;font-size:.82rem;display:block;margin-bottom:.2rem;">Serve!</strong><span style="color:var(--white-dim);font-size:.85rem;">Join your team and begin serving in the house of God. Welcome to the Tehillah family!</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div id="footer-mount"></div>
+<script src="layout.js"></script>
+<script src="main.js"></script>
+
+<script type="module">
+  import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  const app = initializeApp(TEHILLAH_CONFIG.firebase);
+  const db  = getFirestore(app);
+
+  let selectedDepts = [];
+  let selectedDays  = ['Saturday'];
+
+  window.toggleDept = (el, name) => {
+    el.classList.toggle('selected');
+    if (el.classList.contains('selected')) selectedDepts.push(name);
+    else selectedDepts = selectedDepts.filter(d => d !== name);
+    // sync primary select
+    if (selectedDepts.length > 0) {
+      const sel = document.getElementById('vDept');
+      for (let i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].text.includes(selectedDepts[0].split('&')[0].trim())) { sel.selectedIndex = i; break; }
+      }
+    }
+  };
+
+  window.toggleDay = (btn, day) => {
+    btn.classList.toggle('active');
+    const span = btn.querySelector('span:last-child');
+    if (btn.classList.contains('active')) {
+      selectedDays.push(day);
+      if (span) span.textContent = '✓';
+    } else {
+      selectedDays = selectedDays.filter(d => d !== day);
+      if (span) span.textContent = '';
+    }
+  };
+
+  window.submitVolunteer = async () => {
+    const firstName = document.getElementById('vFirstName').value.trim();
+    const lastName  = document.getElementById('vLastName').value.trim();
+    const email     = document.getElementById('vEmail').value.trim();
+    const phone     = document.getElementById('vPhone').value.trim();
+    const city      = document.getElementById('vCity').value.trim();
+    const dept      = document.getElementById('vDept').value;
+    const skills    = document.getElementById('vSkills').value.trim();
+    const why       = document.getElementById('vWhy').value.trim();
+    const errEl     = document.getElementById('vError');
+    errEl.style.display = 'none';
+
+    if (!firstName || !lastName) { errEl.textContent='Please enter your full name.'; errEl.style.display='block'; return; }
+    if (!email || !email.includes('@')) { errEl.textContent='Please enter a valid email address.'; errEl.style.display='block'; return; }
+    if (!phone) { errEl.textContent='Please enter your phone number.'; errEl.style.display='block'; return; }
+
+    const btn = document.getElementById('vBtn');
+    btn.innerHTML = '<span class="spinner-inline"></span> Submitting…';
+    btn.style.pointerEvents = 'none';
+
+    try {
+      await addDoc(collection(db,'volunteers'), {
+        name:         `${firstName} ${lastName}`,
+        firstName, lastName, email, phone, city,
+        department:   dept,
+        departments:  selectedDepts.length > 0 ? selectedDepts : [dept],
+        availability: selectedDays,
+        skills, why,
+        church:       document.getElementById('vChurch').value,
+        status:       'pending',
+        createdAt:    serverTimestamp()
+      });
+
+      if (typeof emailjs !== 'undefined') {
+        emailjs.init(TEHILLAH_CONFIG.emailjs.publicKey);
+        emailjs.send(TEHILLAH_CONFIG.emailjs.serviceId, TEHILLAH_CONFIG.emailjs.templates.volunteerReceived, {
+          to_name: `${firstName} ${lastName}`, to_email: email,
+          department: dept, ministry: TEHILLAH_CONFIG.site.name
+        }).catch(()=>{});
+      }
+
+      document.getElementById('vSuccess').style.display = 'block';
+      // reset form
+      ['vFirstName','vLastName','vEmail','vPhone','vCity','vSkills','vWhy'].forEach(id => { document.getElementById(id).value = ''; });
+      document.querySelectorAll('.dept-card.selected').forEach(c => c.classList.remove('selected'));
+      selectedDepts = [];
+    } catch(e) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+    }
+    btn.innerHTML = 'Submit Volunteer Application';
+    btn.style.pointerEvents = '';
+  };
+</script>
+</body>
+</html>

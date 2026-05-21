@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Bookings — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .capacity-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .cap-card { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:1.2rem; text-align:center; }
+    .cap-time { font-family:'Cinzel',serif; font-size:0.6rem; color:var(--gold); letter-spacing:0.12em; margin-bottom:0.5rem; }
+    .cap-name { font-size:0.82rem; color:var(--white); margin-bottom:0.8rem; }
+    .cap-num { font-family:'Cinzel',serif; font-size:1.6rem; color:var(--white); line-height:1; }
+    .cap-denom { font-size:0.75rem; color:var(--white-dim); }
+    .cap-ring { width:50px; height:50px; margin:0.5rem auto 0; position:relative; }
+    .cap-ring svg { transform:rotate(-90deg); }
+    .cap-pct { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); }
+    .user-cell { display:flex; align-items:center; gap:0.7rem; }
+    .pass-code { font-family:'Cinzel',serif; font-size:0.7rem; color:var(--gold); letter-spacing:0.05em; background:rgba(201,168,76,0.08); padding:0.2rem 0.5rem; border-radius:3px; }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div><div class="admin-page-title">Session Bookings</div><div class="breadcrumb"><a href="index.html">Dashboard</a> › Bookings</div></div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-gold btn-sm" onclick="openModal('newBookingModal')">➕ Add Booking</button>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- CAPACITY RINGS -->
+      <div class="capacity-grid">
+        <div class="cap-card">
+          <div class="cap-time">06:00 – 08:00</div>
+          <div class="cap-name">Morning Watch</div>
+          <div class="cap-num">15<span class="cap-denom">/20</span></div>
+          <div class="cap-ring">
+            <svg width="50" height="50" viewBox="0 0 50 50">
+              <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/>
+              <circle cx="25" cy="25" r="20" fill="none" stroke="var(--gold)" stroke-width="5" stroke-dasharray="75.4 125.6" stroke-linecap="round"/>
+            </svg>
+            <div class="cap-pct">75%</div>
+          </div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-time">14:00 – 16:00</div>
+          <div class="cap-name">Afternoon Watch</div>
+          <div class="cap-num" style="color:var(--danger)">20<span class="cap-denom">/20</span></div>
+          <div class="cap-ring">
+            <svg width="50" height="50" viewBox="0 0 50 50">
+              <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/>
+              <circle cx="25" cy="25" r="20" fill="none" stroke="var(--danger)" stroke-width="5" stroke-dasharray="125.6 0" stroke-linecap="round"/>
+            </svg>
+            <div class="cap-pct" style="color:var(--danger)">FULL</div>
+          </div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-time">18:00 – 20:00</div>
+          <div class="cap-name">Evening Watch</div>
+          <div class="cap-num">7<span class="cap-denom">/20</span></div>
+          <div class="cap-ring">
+            <svg width="50" height="50" viewBox="0 0 50 50">
+              <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/>
+              <circle cx="25" cy="25" r="20" fill="none" stroke="var(--success)" stroke-width="5" stroke-dasharray="44 81.6" stroke-linecap="round"/>
+            </svg>
+            <div class="cap-pct" style="color:var(--success)">35%</div>
+          </div>
+        </div>
+        <div class="cap-card">
+          <div class="cap-time">00:00 – 02:00</div>
+          <div class="cap-name">Midnight Watch</div>
+          <div class="cap-num">4<span class="cap-denom">/20</span></div>
+          <div class="cap-ring">
+            <svg width="50" height="50" viewBox="0 0 50 50">
+              <circle cx="25" cy="25" r="20" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="5"/>
+              <circle cx="25" cy="25" r="20" fill="none" stroke="var(--info)" stroke-width="5" stroke-dasharray="25 100.6" stroke-linecap="round"/>
+            </svg>
+            <div class="cap-pct" style="color:var(--info)">20%</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS TABLE -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">All Bookings</div>
+          <div style="display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" onclick="exportCSV('bookingsTable','bookings.csv')">⬇ Export CSV</button>
+            <button class="btn btn-gold btn-sm" onclick="openModal('newBookingModal')">➕ Add</button>
+          </div>
+        </div>
+        <div class="admin-card-body">
+          <div class="table-toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search name, email, pass code…" oninput="filterTable(this.value)"/></div>
+            <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+              <select class="filter-select" onchange="filterBySession(this.value)">
+                <option value="">All Sessions</option>
+                <option>Morning Watch</option>
+                <option>Afternoon Watch</option>
+                <option>Evening Watch</option>
+                <option>Midnight Watch</option>
+                <option>Dawn Watch</option>
+              </select>
+              <select class="filter-select" onchange="filterByStatus(this.value)">
+                <option value="">All Status</option>
+                <option>Confirmed</option>
+                <option>Pending</option>
+                <option>Cancelled</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="admin-table" id="bookingsTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Attendee</th>
+                  <th>Session</th>
+                  <th>Date</th>
+                  <th>Seats</th>
+                  <th>Pass Code</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="bookingsTbody">
+                <!-- rows injected by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1.2rem;flex-wrap:wrap;gap:0.8rem;">
+            <span style="font-size:0.78rem;color:var(--white-dim);">Showing 1–10 of 347 bookings</span>
+            <div style="display:flex;gap:0.5rem;">
+              <button class="btn btn-outline btn-sm">← Prev</button>
+              <button class="btn btn-gold btn-sm">1</button>
+              <button class="btn btn-outline btn-sm">2</button>
+              <button class="btn btn-outline btn-sm">3</button>
+              <button class="btn btn-outline btn-sm">Next →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD BOOKING MODAL -->
+<div class="modal-overlay" id="newBookingModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Add New Booking</div>
+      <button class="modal-close" onclick="closeModal('newBookingModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Full Name</label><input class="form-input" placeholder="Attendee name"/></div>
+        <div class="form-group"><label class="form-label">Phone / WhatsApp</label><input class="form-input" placeholder="+254 700 000 000"/></div>
+      </div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="email@example.com"/></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Session</label>
+          <select class="form-select">
+            <option>Morning Watch (06:00–08:00)</option>
+            <option>Afternoon Watch (14:00–16:00)</option>
+            <option>Evening Watch (18:00–20:00)</option>
+            <option>Night Watch (22:00–00:00)</option>
+            <option>Midnight Watch (00:00–02:00)</option>
+            <option>Dawn Watch (04:00–06:00)</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Seats</label><input class="form-input" type="number" value="1" min="1" max="10"/></div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-select"><option>Confirmed</option><option>Pending</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('newBookingModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveBooking()">Save & Send Pass</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+<script>
+const bookingSamples = [
+  { id:1, name:'John Kamau', email:'john@gmail.com', session:'Morning Watch', date:'Aug 14, 2025', seats:2, pass:'TH-0814-AM-001', status:'Confirmed' },
+  { id:2, name:'Grace Muthoni', email:'grace@mail.com', session:'Evening Watch', date:'Aug 14, 2025', seats:1, pass:'TH-0814-EV-002', status:'Confirmed' },
+  { id:3, name:'Peter Odhiambo', email:'peter@outlook.com', session:'Afternoon Watch', date:'Aug 15, 2025', seats:3, pass:'TH-0815-AF-003', status:'Confirmed' },
+  { id:4, name:'Mercy Achieng', email:'mercy@yahoo.com', session:'Midnight Watch', date:'Aug 16, 2025', seats:1, pass:'TH-0816-MN-004', status:'Pending' },
+  { id:5, name:'Samuel Were', email:'sam@gmail.com', session:'Morning Watch', date:'Aug 14, 2025', seats:2, pass:'TH-0814-AM-005', status:'Confirmed' },
+  { id:6, name:'Faith Njeri', email:'faith@mail.com', session:'Dawn Watch', date:'Aug 17, 2025', seats:1, pass:'TH-0817-DW-006', status:'Confirmed' },
+  { id:7, name:'Daniel Maina', email:'dan@gmail.com', session:'Evening Watch', date:'Aug 15, 2025', seats:2, pass:'TH-0815-EV-007', status:'Cancelled' },
+  { id:8, name:'Ruth Wanjiku', email:'ruth@mail.com', session:'Morning Watch', date:'Aug 18, 2025', seats:1, pass:'TH-0818-AM-008', status:'Pending' },
+  { id:9, name:'Joseph Kibet', email:'joe@gmail.com', session:'Afternoon Watch', date:'Aug 14, 2025', seats:4, pass:'TH-0814-AF-009', status:'Confirmed' },
+  { id:10, name:'Esther Chebet', email:'esther@mail.com', session:'Midnight Watch', date:'Aug 20, 2025', seats:1, pass:'TH-0820-MN-010', status:'Confirmed' },
+];
+
+const statusBadge = s => s==='Confirmed'?'badge-green':s==='Pending'?'badge-gold':'badge-red';
+
+function renderBookings(data) {
+  const tbody = document.getElementById('bookingsTbody');
+  tbody.innerHTML = data.map(b => `
+    <tr>
+      <td style="color:var(--white-dim)">${b.id}</td>
+      <td><div class="user-cell"><div class="avatar avatar-sm">${b.name[0]}</div><div><div style="font-size:0.85rem;color:var(--white)">${b.name}</div><div style="font-size:0.72rem;color:var(--white-dim)">${b.email}</div></div></div></td>
+      <td>${b.session}</td>
+      <td style="color:var(--white-dim)">${b.date}</td>
+      <td style="text-align:center">${b.seats}</td>
+      <td><span class="pass-code">${b.pass}</span></td>
+      <td><span class="badge ${statusBadge(b.status)}">${b.status}</span></td>
+      <td>
+        <div style="display:flex;gap:0.4rem;">
+          <button class="btn btn-outline btn-icon btn-sm" onclick="viewBooking(${b.id})" title="View">👁</button>
+          <button class="btn btn-success btn-icon btn-sm" onclick="sendPass('${b.name}')" title="Resend Pass">📤</button>
+          <button class="btn btn-danger btn-icon btn-sm" onclick="deleteRow(this,'${b.name}')" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterTable(val) {
+  const q = val.toLowerCase();
+  renderBookings(bookingSamples.filter(b => b.name.toLowerCase().includes(q) || b.email.toLowerCase().includes(q) || b.pass.toLowerCase().includes(q)));
+}
+function filterBySession(val) {
+  renderBookings(val ? bookingSamples.filter(b=>b.session===val) : bookingSamples);
+}
+function filterByStatus(val) {
+  renderBookings(val ? bookingSamples.filter(b=>b.status===val) : bookingSamples);
+}
+function viewBooking(id) { showToast(`Viewing booking #${id}`, 'success'); }
+function sendPass(name) { showToast(`Pass resent to ${name}`, 'success'); }
+function saveBooking() { closeModal('newBookingModal'); showToast('Booking saved & pass sent!', 'success'); }
+
+document.addEventListener('DOMContentLoaded', () => renderBookings(bookingSamples));
+</script>
+</body>
+</html>
+
+<!-- Firebase live bookings -->
+<script src="../config.js"></script>
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query,
+           where, orderBy, limit, updateDoc, deleteDoc,
+           doc, onSnapshot }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, user => { if (!user) window.location.href = 'login.html'; });
+
+  const MAX = 20;
+  const SESSIONS = ['Morning Watch','Afternoon Watch','Evening Watch','Night Watch','Midnight Watch','Dawn Watch'];
+
+  async function loadCapacityRings() {
+    const today = new Date().toISOString().split('T')[0];
+    const snap  = await getDocs(query(collection(db,'bookings'), where('date','==',today)));
+    const counts = {};
+    snap.forEach(d => { const s=d.data().session; counts[s]=(counts[s]||0)+(d.data().seats||1); });
+    // Update ring text
+    document.querySelectorAll('.cap-num').forEach(el => {
+      const card = el.closest('.cap-card');
+      const name = card?.querySelector('.cap-name')?.textContent;
+      if (name) { const booked = counts[name]||0; el.textContent = booked; if(booked>=MAX) el.style.color='var(--danger)'; }
+    });
+  }
+
+  async function loadBookings(filterSession='', filterStatus='') {
+    const constraints = [orderBy('createdAt','desc'), limit(50)];
+    if (filterSession) constraints.push(where('session','==',filterSession));
+    if (filterStatus)  constraints.push(where('status','==',filterStatus));
+    const snap = await getDocs(query(collection(db,'bookings'), ...constraints));
+    const data = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+
+    const tbody = document.getElementById('bookingsTbody');
+    if (!tbody) return;
+    tbody.innerHTML = data.length === 0
+      ? `<tr><td colspan="8" style="text-align:center;color:var(--white-dim);padding:2rem;">No bookings found.</td></tr>`
+      : data.map((b,i) => `
+        <tr>
+          <td style="color:var(--white-dim)">${i+1}</td>
+          <td><div class="user-cell"><div class="avatar avatar-sm">${(b.name||'?')[0]}</div><div><div style="font-size:.85rem;color:var(--white)">${b.name||'—'}</div><div style="font-size:.72rem;color:var(--white-dim)">${b.email||'—'}</div></div></div></td>
+          <td>${b.session||'—'}</td>
+          <td style="color:var(--white-dim)">${b.date||'—'}</td>
+          <td style="text-align:center">${b.seats||1}</td>
+          <td><span style="font-family:'Cinzel',serif;font-size:.7rem;color:var(--gold);background:rgba(201,168,76,.08);padding:.2rem .5rem;">${b.passCode||'—'}</span></td>
+          <td><span class="badge ${b.status==='confirmed'?'badge-green':b.status==='pending'?'badge-gold':'badge-red'}">${b.status||'pending'}</span></td>
+          <td>
+            <div style="display:flex;gap:.4rem;">
+              <button class="btn btn-success btn-icon btn-sm" onclick="resendPass('${b.id}','${b.name||''}')" title="Resend Pass">📤</button>
+              <button class="btn btn-danger btn-icon btn-sm" onclick="deleteBooking('${b.id}','${b.name||''}')" title="Delete">🗑</button>
+            </div>
+          </td>
+        </tr>`).join('');
+    document.querySelector('.admin-card-body > .table-toolbar + div + div span')
+      && (document.querySelector('.admin-card-body > .table-toolbar + div + div span').textContent = `Showing ${data.length} bookings`);
+  }
+
+  window.deleteBooking = async (id, name) => {
+    if (!confirm(`Delete booking for "${name}"?`)) return;
+    await deleteDoc(doc(db,'bookings',id));
+    showToast(`Booking for ${name} deleted`, 'danger');
+    loadBookings();
+  };
+
+  window.resendPass = (id, name) => { showToast(`Pass resent to ${name}`, 'success'); };
+  window.filterBySession = (val) => loadBookings(val,'');
+  window.filterByStatus  = (val) => loadBookings('',val);
+
+  window.saveBooking = async () => {
+    closeModal('newBookingModal');
+    showToast('Booking saved & pass sent!','success');
+    loadBookings();
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadBookings();
+    loadCapacityRings();
+  });
+</script>

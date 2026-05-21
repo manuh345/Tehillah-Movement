@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Dashboard — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+    .grid-3 { display:grid; grid-template-columns:2fr 1fr; gap:1.5rem; margin-bottom:1.5rem; }
+    .activity-item { display:flex; gap:1rem; padding:0.9rem 0; border-bottom:1px solid rgba(201,168,76,0.07); align-items:flex-start; }
+    .activity-item:last-child { border-bottom:none; }
+    .activity-icon { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.85rem; flex-shrink:0; }
+    .activity-icon.booking { background:rgba(201,168,76,0.12); }
+    .activity-icon.prayer  { background:rgba(76,175,132,0.12); }
+    .activity-icon.donate  { background:rgba(82,148,224,0.12); }
+    .activity-icon.vol     { background:rgba(224,166,82,0.12); }
+    .activity-text { font-size:0.82rem; color:var(--white); line-height:1.5; flex:1; }
+    .activity-text span { color:var(--white-dim); }
+    .activity-time { font-size:0.72rem; color:var(--white-dim); white-space:nowrap; }
+    .quick-actions { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+    .quick-action-btn {
+      padding:1rem; border:1px solid var(--border); background:rgba(255,255,255,0.02);
+      border-radius:6px; display:flex; align-items:center; gap:0.7rem;
+      cursor:pointer; transition:all 0.2s; text-decoration:none; color:var(--white);
+    }
+    .quick-action-btn:hover { border-color:var(--gold); background:rgba(201,168,76,0.06); }
+    .quick-action-btn .qa-icon { font-size:1.2rem; }
+    .quick-action-btn .qa-label { font-family:'Cinzel',serif; font-size:0.65rem; letter-spacing:0.08em; }
+    .sessions-list { display:flex; flex-direction:column; gap:0; }
+    .session-row { display:flex; justify-content:space-between; align-items:center; padding:0.9rem 0; border-bottom:1px solid rgba(201,168,76,0.07); }
+    .session-row:last-child { border-bottom:none; }
+    .session-name { font-size:0.85rem; color:var(--white); }
+    .session-time { font-size:0.75rem; color:var(--white-dim); margin-top:0.2rem; }
+    .capacity-wrap { display:flex; align-items:center; gap:0.8rem; min-width:140px; }
+    .capacity-label { font-size:0.72rem; color:var(--white-dim); white-space:nowrap; }
+    .map-mini {
+      width:100%; height:160px; background:linear-gradient(135deg,var(--navy-light),var(--navy-mid));
+      border-radius:6px; display:flex; align-items:center; justify-content:center;
+      position:relative; overflow:hidden; border:1px solid var(--border);
+    }
+    .map-mini-dots {
+      position:absolute; inset:0;
+      background-image:
+        radial-gradient(4px 4px at 25% 45%, var(--gold) 0%,transparent 100%),
+        radial-gradient(3px 3px at 50% 35%, var(--gold) 0%,transparent 100%),
+        radial-gradient(4px 4px at 70% 55%, var(--gold) 0%,transparent 100%),
+        radial-gradient(3px 3px at 15% 65%, var(--gold) 0%,transparent 100%),
+        radial-gradient(3px 3px at 85% 30%, var(--gold) 0%,transparent 100%),
+        radial-gradient(3px 3px at 40% 70%, var(--gold) 0%,transparent 100%);
+      opacity:0.6;
+    }
+    .map-mini-label { position:relative;z-index:2; font-family:'Cinzel',serif; font-size:0.65rem; color:var(--gold); letter-spacing:0.15em; }
+    .giving-breakdown { display:flex; flex-direction:column; gap:1rem; }
+    .giving-row { }
+    .giving-row-top { display:flex; justify-content:space-between; margin-bottom:0.4rem; }
+    .giving-row-label { font-size:0.78rem; color:var(--white-dim); }
+    .giving-row-val { font-size:0.78rem; color:var(--white); font-family:'Cinzel',serif; }
+    @media(max-width:1024px){ .grid-2,.grid-3 { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <!-- sidebar injected by admin.js -->
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div>
+          <div class="admin-page-title">Dashboard</div>
+          <div class="breadcrumb">Welcome back, Admin ✦</div>
+        </div>
+      </div>
+      <div class="admin-header-right">
+        <div class="header-search"><span style="color:var(--white-dim)">🔍</span><input type="text" placeholder="Search…"/></div>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+        <button class="header-icon-btn">👤</button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+
+      <!-- STAT CARDS -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-card-accent"></div>
+          <div class="stat-label">Total Bookings</div>
+          <div class="stat-value" data-count="347">0</div>
+          <div class="stat-change up">↑ 12% this week</div>
+          <div class="stat-icon">🎟</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-accent green"></div>
+          <div class="stat-label">Total Donations (KES)</div>
+          <div class="stat-value" data-count="284500">0</div>
+          <div class="stat-change up">↑ 8% this month</div>
+          <div class="stat-icon">♦</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-accent blue"></div>
+          <div class="stat-label">Volunteer Applications</div>
+          <div class="stat-value" data-count="58">0</div>
+          <div class="stat-change up">↑ 5 new today</div>
+          <div class="stat-icon">🙌</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-accent red"></div>
+          <div class="stat-label">Prayer Requests</div>
+          <div class="stat-value" data-count="124">0</div>
+          <div class="stat-change up">↑ 8 unread</div>
+          <div class="stat-icon">🙏</div>
+        </div>
+      </div>
+
+      <!-- ROW 2: CHART + QUICK ACTIONS -->
+      <div class="grid-2">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">Bookings This Month</div>
+            <select class="filter-select" style="padding:0.3rem 0.6rem; font-size:0.72rem;">
+              <option>Last 30 Days</option><option>Last 7 Days</option><option>This Year</option>
+            </select>
+          </div>
+          <div class="admin-card-body">
+            <div class="chart-placeholder" id="bookingsChart"></div>
+            <div style="display:flex;justify-content:space-between;margin-top:0.5rem;">
+              <span style="font-size:0.7rem;color:var(--white-dim)">Mon</span>
+              <span style="font-size:0.7rem;color:var(--white-dim)">Tue</span>
+              <span style="font-size:0.7rem;color:var(--white-dim)">Wed</span>
+              <span style="font-size:0.7rem;color:var(--white-dim)">Thu</span>
+              <span style="font-size:0.7rem;color:var(--white-dim)">Fri</span>
+              <span style="font-size:0.7rem;color:var(--white-dim)">Sat</span>
+              <span style="font-size:0.7rem;color:var(--white-dim)">Sun</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header"><div class="admin-card-title">Quick Actions</div></div>
+          <div class="admin-card-body">
+            <div class="quick-actions">
+              <a href="events.html" class="quick-action-btn"><span class="qa-icon">➕</span><span class="qa-label">New Event</span></a>
+              <a href="bookings.html" class="quick-action-btn"><span class="qa-icon">🎟</span><span class="qa-label">View Bookings</span></a>
+              <a href="prayer.html" class="quick-action-btn"><span class="qa-icon">🙏</span><span class="qa-label">Prayer Queue</span></a>
+              <a href="donations.html" class="quick-action-btn"><span class="qa-icon">♦</span><span class="qa-label">Donations</span></a>
+              <a href="volunteers.html" class="quick-action-btn"><span class="qa-icon">🙌</span><span class="qa-label">Applications</span></a>
+              <a href="media.html" class="quick-action-btn"><span class="qa-icon">🎬</span><span class="qa-label">Upload Media</span></a>
+              <a href="messages.html" class="quick-action-btn"><span class="qa-icon">✉</span><span class="qa-label">Messages</span></a>
+              <a href="users.html" class="quick-action-btn"><span class="qa-icon">👥</span><span class="qa-label">Users</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 3: SESSIONS + ACTIVITY -->
+      <div class="grid-3">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">Today's Session Capacity</div>
+            <a href="bookings.html" class="btn btn-outline btn-sm">View All</a>
+          </div>
+          <div class="admin-card-body">
+            <div class="sessions-list">
+              <div class="session-row">
+                <div><div class="session-name">Morning Watch</div><div class="session-time">06:00 – 08:00</div></div>
+                <div class="capacity-wrap"><div class="progress" style="flex:1"><div class="progress-bar" style="width:75%"></div></div><span class="capacity-label">15/20</span></div>
+              </div>
+              <div class="session-row">
+                <div><div class="session-name">Afternoon Watch</div><div class="session-time">14:00 – 16:00</div></div>
+                <div class="capacity-wrap"><div class="progress" style="flex:1"><div class="progress-bar red" style="width:100%"></div></div><span class="capacity-label" style="color:var(--danger)">FULL</span></div>
+              </div>
+              <div class="session-row">
+                <div><div class="session-name">Evening Watch</div><div class="session-time">18:00 – 20:00</div></div>
+                <div class="capacity-wrap"><div class="progress" style="flex:1"><div class="progress-bar" style="width:35%"></div></div><span class="capacity-label">7/20</span></div>
+              </div>
+              <div class="session-row">
+                <div><div class="session-name">Midnight Watch</div><div class="session-time">00:00 – 02:00</div></div>
+                <div class="capacity-wrap"><div class="progress" style="flex:1"><div class="progress-bar green" style="width:10%"></div></div><span class="capacity-label">2/20</span></div>
+              </div>
+              <div class="session-row">
+                <div><div class="session-name">Dawn Watch</div><div class="session-time">04:00 – 06:00</div></div>
+                <div class="capacity-wrap"><div class="progress" style="flex:1"><div class="progress-bar" style="width:20%"></div></div><span class="capacity-label">4/20</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1.5rem;">
+          <!-- GLOBAL MAP MINI -->
+          <div class="admin-card">
+            <div class="admin-card-header"><div class="admin-card-title">Global Participants</div></div>
+            <div class="admin-card-body" style="padding:1rem;">
+              <div class="map-mini"><div class="map-mini-dots"></div><span class="map-mini-label">14 NATIONS ACTIVE</span></div>
+              <div style="display:flex;justify-content:space-between;margin-top:1rem;flex-wrap:wrap;gap:0.5rem;">
+                <span style="font-size:0.72rem;color:var(--white-dim);">🇰🇪 Kenya <strong style="color:var(--gold)">842</strong></span>
+                <span style="font-size:0.72rem;color:var(--white-dim);">🇳🇬 Nigeria <strong style="color:var(--gold)">231</strong></span>
+                <span style="font-size:0.72rem;color:var(--white-dim);">🇬🇧 UK <strong style="color:var(--gold)">119</strong></span>
+                <span style="font-size:0.72rem;color:var(--white-dim);">🇺🇸 USA <strong style="color:var(--gold)">98</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- GIVING BREAKDOWN -->
+          <div class="admin-card">
+            <div class="admin-card-header"><div class="admin-card-title">Giving This Month</div></div>
+            <div class="admin-card-body">
+              <div class="giving-breakdown">
+                <div class="giving-row">
+                  <div class="giving-row-top"><span class="giving-row-label">General Fund</span><span class="giving-row-val">KES 142,000</span></div>
+                  <div class="progress"><div class="progress-bar" style="width:62%"></div></div>
+                </div>
+                <div class="giving-row">
+                  <div class="giving-row-top"><span class="giving-row-label">Glory Encounter</span><span class="giving-row-val">KES 88,500</span></div>
+                  <div class="progress"><div class="progress-bar green" style="width:39%"></div></div>
+                </div>
+                <div class="giving-row">
+                  <div class="giving-row-top"><span class="giving-row-label">Missions</span><span class="giving-row-val">KES 34,000</span></div>
+                  <div class="progress"><div class="progress-bar" style="width:15%"></div></div>
+                </div>
+                <div class="giving-row">
+                  <div class="giving-row-top"><span class="giving-row-label">Equipment</span><span class="giving-row-val">KES 20,000</span></div>
+                  <div class="progress"><div class="progress-bar blue" style="width:9%;background:linear-gradient(90deg,#3a6eb0,var(--info))"></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROW 4: RECENT ACTIVITY -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Recent Activity</div>
+          <span style="font-size:0.72rem;color:var(--white-dim);">Live feed</span>
+        </div>
+        <div class="admin-card-body">
+          <div class="activity-item">
+            <div class="activity-icon booking">🎟</div>
+            <div class="activity-text"><strong>John Kamau</strong> booked the <strong>Evening Watch</strong> for Aug 14<span> · Morning Watch · 2 seats</span></div>
+            <div class="activity-time">2 min ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon donate">♦</div>
+            <div class="activity-text"><strong>Anonymous</strong> donated <strong>KES 5,000</strong> to Glory Encounter Fund</div>
+            <div class="activity-time">8 min ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon prayer">🙏</div>
+            <div class="activity-text"><strong>Grace M.</strong> submitted a prayer request — <em>Healing</em> category</div>
+            <div class="activity-time">14 min ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon vol">🙌</div>
+            <div class="activity-text"><strong>Peter Odhiambo</strong> applied to volunteer in <strong>Media & Production</strong></div>
+            <div class="activity-time">32 min ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon booking">✉</div>
+            <div class="activity-text"><strong>Calvary Church, Lagos</strong> sent an invite request — <em>Revival Conference · Oct 2025</em></div>
+            <div class="activity-time">1 hr ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon donate">♦</div>
+            <div class="activity-text"><strong>David Njenga</strong> became a <strong>Monthly Partner</strong> at KES 2,000/month</div>
+            <div class="activity-time">2 hr ago</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+</div>
+
+<script src="../config.js"></script>
+<script src="admin.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderBarChart('bookingsChart', [18, 24, 31, 27, 42, 68, 38]);
+  });
+</script>
+</body>
+</html>
+
+<!-- Firebase live stats injection -->
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query,
+           where, orderBy, limit, onSnapshot, serverTimestamp }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  // Guard: redirect to login if not authenticated
+  onAuthStateChanged(auth, user => {
+    if (!user) window.location.href = 'login.html';
+  });
+
+  function animateNum(el, target) {
+    const step = Math.max(1, Math.ceil(target / 40));
+    let cur = 0;
+    const t = setInterval(() => {
+      cur = Math.min(cur + step, target);
+      el.textContent = cur.toLocaleString();
+      if (cur >= target) clearInterval(t);
+    }, 30);
+  }
+
+  async function loadStats() {
+    try {
+      const [bSnap, dSnap, vSnap, pSnap] = await Promise.all([
+        getDocs(collection(db,'bookings')),
+        getDocs(collection(db,'donations')),
+        getDocs(collection(db,'volunteers')),
+        getDocs(query(collection(db,'prayerRequests'), where('status','==','unread')))
+      ]);
+      const totalDonations = dSnap.docs.reduce((s,d) => s + (d.data().amount||0), 0);
+      const els = document.querySelectorAll('.stat-value[data-count]');
+      const vals = [bSnap.size, totalDonations, vSnap.size, pSnap.size];
+      els.forEach((el,i) => { if(vals[i]!==undefined) animateNum(el, vals[i]); });
+    } catch(e) { console.warn('Stats load failed — using defaults'); }
+  }
+
+  async function loadActivity() {
+    try {
+      const [bSnap, dSnap, pSnap] = await Promise.all([
+        getDocs(query(collection(db,'bookings'), orderBy('createdAt','desc'), limit(3))),
+        getDocs(query(collection(db,'donations'), orderBy('createdAt','desc'), limit(2))),
+        getDocs(query(collection(db,'prayerRequests'), orderBy('createdAt','desc'), limit(2)))
+      ]);
+      const activityContainer = document.querySelector('.admin-card-body .activity-item')?.parentElement;
+      if (!activityContainer) return;
+
+      const items = [];
+      bSnap.forEach(d => { const b=d.data(); items.push({ icon:'🎟', cls:'booking', text:`<strong>${b.name||'Someone'}</strong> booked <strong>${b.session||'a session'}</strong> for ${b.date||'an event'}`, time:'Just now' }); });
+      dSnap.forEach(d => { const g=d.data(); items.push({ icon:'♦', cls:'donate', text:`<strong>${g.name||'Anonymous'}</strong> donated <strong>KES ${(g.amount||0).toLocaleString()}</strong> to ${g.fund||'Ministry'}`, time:'Recently' }); });
+      pSnap.forEach(d => { const p=d.data(); items.push({ icon:'🙏', cls:'prayer', text:`<strong>${p.name||'Someone'}</strong> submitted a prayer request — <em>${p.category||'Prayer'}</em>`, time:'Recently' }); });
+
+      if (items.length > 0) {
+        activityContainer.innerHTML = items.map(it => `
+          <div class="activity-item">
+            <div class="activity-icon ${it.cls}">${it.icon}</div>
+            <div class="activity-text">${it.text}</div>
+            <div class="activity-time">${it.time}</div>
+          </div>`).join('');
+      }
+    } catch(e) { /* keep static activity */ }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+    loadActivity();
+  });
+</script>
+<script>
+  // Add config.js reference for admin pages
+  if (typeof TEHILLAH_CONFIG === 'undefined') {
+    const s = document.createElement('script');
+    s.src = '../config.js';
+    document.head.prepend(s);
+  }
+</script>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Volunteers — Tehillah Admin</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    .dept-pills { display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:1.5rem; }
+    .dept-pill { padding:0.35rem 0.9rem; border:1px solid var(--border); border-radius:20px; font-size:0.7rem; color:var(--white-dim); cursor:pointer; transition:all 0.2s; background:transparent; }
+    .dept-pill.active,.dept-pill:hover { border-color:var(--gold); color:var(--gold); background:rgba(201,168,76,0.08); }
+    .dept-stat-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:1rem; margin-bottom:1.5rem; }
+    .dept-stat { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:1rem; text-align:center; }
+    .dept-stat-icon { font-size:1.4rem; margin-bottom:0.4rem; display:block; }
+    .dept-stat-name { font-size:0.65rem; color:var(--white-dim); font-family:'Cinzel',serif; letter-spacing:0.08em; margin-bottom:0.3rem; }
+    .dept-stat-count { font-family:'Cinzel',serif; font-size:1.2rem; color:var(--gold); }
+    .vol-actions { display:flex; gap:0.4rem; }
+    @media(max-width:1200px){ .dept-stat-grid { grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:640px){ .dept-stat-grid { grid-template-columns:repeat(2,1fr); } }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <main class="admin-main">
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+        <div><div class="admin-page-title">Volunteers & Applications</div><div class="breadcrumb"><a href="index.html">Dashboard</a> › Volunteers</div></div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-outline btn-sm" onclick="exportCSV('volTable','volunteers.csv')">⬇ Export</button>
+        <button class="btn btn-gold btn-sm" onclick="openModal('addVolModal')">➕ Add Volunteer</button>
+        <button class="header-icon-btn" onclick="showToast('No new notifications','success')">🔔<span class="notif-dot"></span></button>
+      </div>
+    </header>
+
+    <div class="admin-content">
+      <!-- STATS -->
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card-accent"></div><div class="stat-label">Total Volunteers</div><div class="stat-value" data-count="58">0</div><div class="stat-icon">🙌</div></div>
+        <div class="stat-card"><div class="stat-card-accent gold"></div><div class="stat-label">Pending Review</div><div class="stat-value" data-count="5">0</div><div class="stat-change" style="color:var(--warning)">Needs attention</div><div class="stat-icon">⏳</div></div>
+        <div class="stat-card"><div class="stat-card-accent green"></div><div class="stat-label">Active This Month</div><div class="stat-value" data-count="34">0</div><div class="stat-icon">✅</div></div>
+        <div class="stat-card"><div class="stat-card-accent blue"></div><div class="stat-label">Departments</div><div class="stat-value" data-count="12">0</div><div class="stat-icon">🏛</div></div>
+      </div>
+
+      <!-- DEPT BREAKDOWN -->
+      <div class="dept-stat-grid">
+        <div class="dept-stat"><span class="dept-stat-icon">🎵</span><div class="dept-stat-name">Worship</div><div class="dept-stat-count">12</div></div>
+        <div class="dept-stat"><span class="dept-stat-icon">📷</span><div class="dept-stat-name">Media</div><div class="dept-stat-count">9</div></div>
+        <div class="dept-stat"><span class="dept-stat-icon">🙏</span><div class="dept-stat-name">Intercession</div><div class="dept-stat-count">8</div></div>
+        <div class="dept-stat"><span class="dept-stat-icon">🏠</span><div class="dept-stat-name">Hospitality</div><div class="dept-stat-count">7</div></div>
+        <div class="dept-stat"><span class="dept-stat-icon">🎨</span><div class="dept-stat-name">Creative</div><div class="dept-stat-count">6</div></div>
+        <div class="dept-stat"><span class="dept-stat-icon">💻</span><div class="dept-stat-name">Technical</div><div class="dept-stat-count">5</div></div>
+      </div>
+
+      <!-- FILTER PILLS -->
+      <div class="dept-pills">
+        <button class="dept-pill active" onclick="setPill(this,'')">All Departments</button>
+        <button class="dept-pill" onclick="setPill(this,'Worship Team')">🎵 Worship</button>
+        <button class="dept-pill" onclick="setPill(this,'Media')">📷 Media</button>
+        <button class="dept-pill" onclick="setPill(this,'Intercession')">🙏 Intercession</button>
+        <button class="dept-pill" onclick="setPill(this,'Hospitality')">🏠 Hospitality</button>
+        <button class="dept-pill" onclick="setPill(this,'Creative Team')">🎨 Creative</button>
+        <button class="dept-pill" onclick="setPill(this,'Technical Team')">💻 Technical</button>
+        <button class="dept-pill" onclick="setPill(this,'Security')">🛡 Security</button>
+        <button class="dept-pill" onclick="setPill(this,'Protocol')">📋 Protocol</button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="admin-card">
+        <div class="admin-card-header">
+          <div class="admin-card-title">Volunteer Applications</div>
+          <div style="display:flex;gap:0.8rem;flex-wrap:wrap;">
+            <select class="filter-select" onchange="filterStatus(this.value)">
+              <option value="">All Status</option>
+              <option>Approved</option>
+              <option>Pending</option>
+              <option>Onboarding</option>
+              <option>Declined</option>
+            </select>
+          </div>
+        </div>
+        <div class="admin-card-body">
+          <div class="table-toolbar">
+            <div class="search-box"><span>🔍</span><input type="text" placeholder="Search name, department…" oninput="filterVols(this.value)"/></div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="admin-table" id="volTable">
+              <thead>
+                <tr><th>#</th><th>Volunteer</th><th>Department</th><th>City</th><th>Availability</th><th>Applied</th><th>Status</th><th>Actions</th></tr>
+              </thead>
+              <tbody id="volTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD VOLUNTEER MODAL -->
+<div class="modal-overlay" id="addVolModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Volunteer</div><button class="modal-close" onclick="closeModal('addVolModal')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">First Name</label><input class="form-input" placeholder="First name"/></div>
+        <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" placeholder="Last name"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="email@example.com"/></div>
+        <div class="form-group"><label class="form-label">Phone</label><input class="form-input" placeholder="+254 700 000 000"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Department</label>
+          <select class="form-select"><option>Worship Team</option><option>Media & Production</option><option>Intercession</option><option>Hospitality</option><option>Creative Team</option><option>Technical Team</option><option>Security</option><option>Protocol</option><option>Event Coordination</option><option>Photography/Film</option></select>
+        </div>
+        <div class="form-group"><label class="form-label">Status</label><select class="form-select"><option>Approved</option><option>Pending</option><option>Onboarding</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">City & Country</label><input class="form-input" placeholder="e.g. Nairobi, Kenya"/></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('addVolModal')">Cancel</button>
+      <button class="btn btn-gold" onclick="saveVol()">Add Volunteer</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW VOLUNTEER MODAL -->
+<div class="modal-overlay" id="viewVolModal">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title" id="viewVolName">Volunteer Details</div><button class="modal-close" onclick="closeModal('viewVolModal')">✕</button></div>
+    <div class="modal-body" id="viewVolBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="closeModal('viewVolModal'); showToast('Volunteer declined','danger')">Decline</button>
+      <button class="btn btn-success" onclick="closeModal('viewVolModal'); showToast('Volunteer approved & notified!','success')">✓ Approve</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+<script>
+const volunteers = [
+  { id:1, name:'Peter Odhiambo', email:'peter@mail.com', dept:'Media & Production', city:'Nairobi', avail:'Weekends', applied:'May 19, 2025', status:'Pending' },
+  { id:2, name:'Sarah Mwangi', email:'sarah@mail.com', dept:'Worship Team', city:'Nairobi', avail:'Saturdays', applied:'May 18, 2025', status:'Approved' },
+  { id:3, name:'Michael Otieno', email:'mike@mail.com', dept:'Technical Team', city:'Kisumu', avail:'Weekends', applied:'May 18, 2025', status:'Onboarding' },
+  { id:4, name:'Diana Waweru', email:'diana@mail.com', dept:'Hospitality', city:'Nairobi', avail:'All week', applied:'May 17, 2025', status:'Approved' },
+  { id:5, name:'James Mutua', email:'james@mail.com', dept:'Security', city:'Mombasa', avail:'Weekends', applied:'May 17, 2025', status:'Pending' },
+  { id:6, name:'Lydia Chebet', email:'lydia@mail.com', dept:'Intercession', city:'Eldoret', avail:'Saturdays', applied:'May 16, 2025', status:'Approved' },
+  { id:7, name:'Brian Kamau', email:'brian@mail.com', dept:'Creative Team', city:'Nairobi', avail:'Weekdays', applied:'May 15, 2025', status:'Approved' },
+  { id:8, name:'Caroline Njoki', email:'caro@mail.com', dept:'Photography/Film', city:'Nairobi', avail:'Weekends', applied:'May 15, 2025', status:'Pending' },
+];
+
+let volData = [...volunteers];
+const sBadge = s => s==='Approved'?'badge-green':s==='Pending'?'badge-gold':s==='Onboarding'?'badge-blue':'badge-red';
+
+function renderVols(data) {
+  document.getElementById('volTbody').innerHTML = data.map(v => `
+    <tr>
+      <td style="color:var(--white-dim)">${v.id}</td>
+      <td><div class="user-cell"><div class="avatar avatar-sm">${v.name[0]}</div><div><div style="font-size:0.85rem;color:var(--white)">${v.name}</div><div style="font-size:0.72rem;color:var(--white-dim)">${v.email}</div></div></div></td>
+      <td style="color:var(--white-dim)">${v.dept}</td>
+      <td style="color:var(--white-dim)">${v.city}</td>
+      <td style="color:var(--white-dim);font-size:0.78rem">${v.avail}</td>
+      <td style="color:var(--white-dim)">${v.applied}</td>
+      <td><span class="badge ${sBadge(v.status)}">${v.status}</span></td>
+      <td>
+        <div class="vol-actions">
+          <button class="btn btn-outline btn-icon btn-sm" onclick="viewVol(${v.id})" title="View">👁</button>
+          ${v.status==='Pending'?`<button class="btn btn-success btn-icon btn-sm" onclick="approveVol('${v.name}')" title="Approve">✓</button>`:''}
+          <button class="btn btn-danger btn-icon btn-sm" onclick="deleteRow(this,'${v.name}')" title="Remove">🗑</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterVols(val) { const q=val.toLowerCase(); renderVols(volunteers.filter(v=>v.name.toLowerCase().includes(q)||v.dept.toLowerCase().includes(q))); }
+function filterStatus(val) { renderVols(val?volunteers.filter(v=>v.status===val):volunteers); }
+function setPill(btn,dept) { document.querySelectorAll('.dept-pill').forEach(p=>p.classList.remove('active')); btn.classList.add('active'); renderVols(dept?volunteers.filter(v=>v.dept.includes(dept)):volunteers); }
+function approveVol(name) { showToast(`${name} approved & notified!`,'success'); }
+function saveVol() { closeModal('addVolModal'); showToast('Volunteer added!','success'); }
+function viewVol(id) {
+  const v = volunteers.find(x=>x.id===id);
+  document.getElementById('viewVolName').textContent = v.name;
+  document.getElementById('viewVolBody').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">
+      <div><div class="form-label">Email</div><div style="color:var(--white)">${v.email}</div></div>
+      <div><div class="form-label">Department</div><div style="color:var(--gold)">${v.dept}</div></div>
+      <div><div class="form-label">City</div><div style="color:var(--white)">${v.city}</div></div>
+      <div><div class="form-label">Availability</div><div style="color:var(--white)">${v.avail}</div></div>
+      <div><div class="form-label">Applied</div><div style="color:var(--white)">${v.applied}</div></div>
+      <div><div class="form-label">Status</div><span class="badge ${sBadge(v.status)}">${v.status}</span></div>
+    </div>`;
+  openModal('viewVolModal');
+}
+document.addEventListener('DOMContentLoaded', ()=>renderVols(volunteers));
+</script>
+</body>
+</html>
+
+<!-- Firebase live volunteers -->
+<script src="../config.js"></script>
+<script type="module">
+  import { initializeApp }      from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, collection, getDocs, query, orderBy, updateDoc, deleteDoc, doc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const app  = initializeApp(TEHILLAH_CONFIG.firebase);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  onAuthStateChanged(auth, user => { if (!user) window.location.href = 'login.html'; });
+
+  const sBadge = s => s==='Approved'?'badge-green':s==='pending'||s==='Pending'?'badge-gold':s==='Onboarding'?'badge-blue':'badge-red';
+
+  async function loadVolunteers() {
+    const snap = await getDocs(query(collection(db,'volunteers'), orderBy('createdAt','desc')));
+    const data = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    const tbody = document.getElementById('volTbody');
+    if (!tbody) return;
+
+    // Update stat counts
+    const els = document.querySelectorAll('.stat-value[data-count]');
+    if (els[0]) els[0].textContent = data.length;
+    if (els[1]) els[1].textContent = data.filter(v => v.status==='pending').length;
+    if (els[2]) els[2].textContent = data.filter(v => v.status==='Approved').length;
+
+    tbody.innerHTML = data.length === 0
+      ? `<tr><td colspan="8" style="text-align:center;color:var(--white-dim);padding:2rem;">No applications yet.</td></tr>`
+      : data.map((v,i) => `
+        <tr>
+          <td style="color:var(--white-dim)">${i+1}</td>
+          <td><div style="display:flex;align-items:center;gap:.7rem;"><div class="avatar avatar-sm">${(v.name||'?')[0]}</div><div><div style="font-size:.85rem;color:var(--white)">${v.name||'—'}</div><div style="font-size:.72rem;color:var(--white-dim)">${v.email||'—'}</div></div></div></td>
+          <td style="color:var(--white-dim)">${v.department||v.departments?.[0]||'—'}</td>
+          <td style="color:var(--white-dim)">${v.city||'—'}</td>
+          <td style="color:var(--white-dim);font-size:.78rem">${Array.isArray(v.availability)?v.availability.join(', '):v.availability||'—'}</td>
+          <td style="color:var(--white-dim)">${v.createdAt?.toDate?v.createdAt.toDate().toLocaleDateString():'—'}</td>
+          <td><span class="badge ${sBadge(v.status)}">${v.status||'pending'}</span></td>
+          <td>
+            <div style="display:flex;gap:.4rem;">
+              <button class="btn btn-success btn-icon btn-sm" onclick="approveVol('${v.id}','${v.name||''}')" title="Approve">✓</button>
+              <button class="btn btn-danger btn-icon btn-sm" onclick="deleteVol('${v.id}','${v.name||''}')" title="Remove">🗑</button>
+            </div>
+          </td>
+        </tr>`).join('');
+  }
+
+  window.approveVol = async (id, name) => {
+    await updateDoc(doc(db,'volunteers',id), { status:'Approved' });
+    showToast(`${name} approved & notified!`,'success');
+    loadVolunteers();
+  };
+
+  window.deleteVol = async (id, name) => {
+    if (!confirm(`Remove "${name}"?`)) return;
+    await deleteDoc(doc(db,'volunteers',id));
+    showToast(`${name} removed`,'danger');
+    loadVolunteers();
+  };
+
+  window.saveVol = () => { closeModal('addVolModal'); showToast('Volunteer added!','success'); loadVolunteers(); };
+
+  document.addEventListener('DOMContentLoaded', loadVolunteers);
+</script>

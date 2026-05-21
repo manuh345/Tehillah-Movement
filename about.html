@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About — Tehillah Movement</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .page-hero {
+      min-height: 55vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 8rem 2rem 4rem; position: relative; overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(201,168,76,0.1) 0%, transparent 65%), var(--navy-mid);
+    }
+    .page-hero-content { position: relative; z-index: 2; max-width: 700px; }
+    .page-hero h1 { font-family:'Cinzel',serif; font-size:clamp(2.5rem,6vw,5rem); line-height:1.1; }
+    .page-hero p { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:1.4rem; color:var(--white-dim); margin-top:1rem; }
+
+    .meaning-section { padding:7rem 4rem; background:var(--navy); }
+    .meaning-grid { display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; margin-top:4rem; }
+    .meaning-word {
+      font-family:'Cinzel',serif; font-size:7rem; color:rgba(201,168,76,0.12);
+      line-height:1; margin-bottom:1rem; display:block;
+    }
+    .meaning-def { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-style:italic; color:var(--white-dim); line-height:1.7; }
+    .meaning-def em { color:var(--gold-light); font-style:normal; }
+
+    .vm-section { padding:7rem 4rem; background:var(--navy-mid); }
+    .vm-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-top:4rem; }
+    .vm-block {
+      padding:4rem 3rem; position:relative; overflow:hidden;
+    }
+    .vm-block:first-child { background:linear-gradient(135deg, var(--navy-light), var(--accent)); }
+    .vm-block:last-child { background:var(--navy-light); }
+    .vm-label { font-family:'Cinzel',serif; font-size:0.6rem; letter-spacing:0.3em; color:var(--gold); margin-bottom:1.5rem; }
+    .vm-text { font-family:'Cormorant Garamond',serif; font-size:1.25rem; line-height:1.9; color:var(--white-dim); font-style:italic; }
+
+    .values-section { padding:7rem 4rem; background:var(--navy); }
+    .values-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:4rem; }
+    .value-card {
+      padding:2.5rem 2rem; border:1px solid rgba(201,168,76,0.15);
+      transition:all 0.4s; position:relative;
+    }
+    .value-card:hover { border-color:rgba(201,168,76,0.4); background:rgba(201,168,76,0.03); transform:translateY(-4px); }
+    .value-num { font-family:'Cinzel',serif; font-size:2.5rem; color:rgba(201,168,76,0.2); line-height:1; margin-bottom:1rem; display:block; }
+    .value-title { font-family:'Cinzel',serif; font-size:1rem; color:var(--gold-light); margin-bottom:0.8rem; }
+    .value-desc { font-size:0.9rem; color:var(--white-dim); line-height:1.8; }
+
+    .scripture-block { padding:6rem 4rem; background:var(--navy-mid); }
+    .scripture-list { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:4rem; }
+
+    .leadership-section { padding:7rem 4rem; background:var(--navy); }
+    .team-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2rem; margin-top:4rem; }
+    .team-card {
+      text-align:center; padding:3rem 2rem;
+      border:1px solid rgba(201,168,76,0.12);
+      transition:all 0.4s;
+    }
+    .team-card:hover { border-color:rgba(201,168,76,0.35); }
+    .team-avatar {
+      width:90px; height:90px; border-radius:50%; margin:0 auto 1.5rem;
+      background:linear-gradient(135deg, var(--gold-dim), var(--accent));
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Cinzel',serif; font-size:1.8rem; color:var(--gold-light);
+      border:2px solid rgba(201,168,76,0.3);
+    }
+    .team-name { font-family:'Cinzel',serif; font-size:1rem; color:var(--white); margin-bottom:0.3rem; }
+    .team-role { font-size:0.8rem; color:var(--gold); letter-spacing:0.1em; }
+
+    @media(max-width:1024px){
+      .meaning-grid,.vm-grid,.scripture-list { grid-template-columns:1fr; }
+      .values-grid,.team-grid { grid-template-columns:repeat(2,1fr); }
+      .meaning-section,.vm-section,.values-section,.scripture-block,.leadership-section { padding:5rem 2rem; }
+    }
+    @media(max-width:768px){
+      .values-grid,.team-grid { grid-template-columns:1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="page-hero-content fade-up">
+      <div class="section-label">Who We Are</div>
+      <h1>About <span class="gold">Tehillah</span></h1>
+      <p>"A Generation Marked by His Presence"</p>
+    </div>
+  </section>
+
+  <!-- MEANING OF TEHILLAH -->
+  <section class="meaning-section">
+    <div class="container">
+      <div class="meaning-grid">
+        <div class="fade-up">
+          <span class="meaning-word">תְּהִלָּה</span>
+          <div class="section-label">The Name</div>
+          <h2 class="section-title" style="font-size:2.5rem; margin-bottom:1.5rem;">What is Tehillah?</h2>
+          <p class="meaning-def">
+            <em>Tehillah</em> (תְּהִלָּה) is a Hebrew word meaning <em>"praise"</em> or <em>"song of praise"</em> — specifically the kind of praise that dwells in, and gives rise to, the manifest presence of God.
+          </p>
+          <p style="margin-top:1.5rem; color:var(--white-dim); line-height:1.9;">
+            It is derived from the same root as Psalm 22:3 — "God <em>inhabits</em> the praises of His people." It is praise that <em>hosts His presence.</em> This is the heart of everything we do.
+          </p>
+        </div>
+        <div class="scripture fade-up delay-2" style="font-size:1.5rem;">
+          "But thou art holy, O thou that <em style='color:var(--gold-light);'>inhabitest the praises</em> of Israel."
+          <cite>Psalm 22:3</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISION & MISSION -->
+  <section class="vm-section">
+    <div class="container">
+      <div style="text-align:center;" class="fade-up">
+        <div class="section-label">Purpose</div>
+        <h2 class="section-title">Vision & Mission</h2>
+      </div>
+      <div class="vm-grid" style="margin-top:4rem;">
+        <div class="vm-block fade-up">
+          <div class="vm-label">VISION</div>
+          <h3 style="font-family:'Cinzel',serif; font-size:1.6rem; margin-bottom:1.5rem; color:var(--white);">The Dream</h3>
+          <p class="vm-text">
+            To raise a generation consumed by God's presence, living lives of worship, holiness, and revival — becoming vessels through whom God reveals His glory to the nations.
+          </p>
+        </div>
+        <div class="vm-block fade-up delay-2">
+          <div class="vm-label">MISSION</div>
+          <h3 style="font-family:'Cinzel',serif; font-size:1.6rem; margin-bottom:1.5rem; color:var(--white);">The Work</h3>
+          <p class="vm-text">
+            Tehillah Movement exists to create atmospheres for God's presence through continuous worship, prayer, discipleship, and revival gatherings — preparing people to become yielded vessels that God can use for His glory.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE VALUES -->
+  <section class="values-section">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">What We Stand On</div>
+        <h2 class="section-title">Core Values</h2>
+      </div>
+      <div class="values-grid">
+        <div class="value-card fade-up">
+          <span class="value-num">01</span>
+          <div class="value-title">The Presence of God</div>
+          <p class="value-desc">Everything we do flows from one conviction: God's manifest presence changes everything. We build atmospheres for Him to dwell.</p>
+        </div>
+        <div class="value-card fade-up delay-1">
+          <span class="value-num">02</span>
+          <div class="value-title">Unceasing Worship</div>
+          <p class="value-desc">Inspired by the Davidic order, we believe in the power of continuous, unceasing worship and prayer before the throne of God.</p>
+        </div>
+        <div class="value-card fade-up delay-2">
+          <span class="value-num">03</span>
+          <div class="value-title">Holiness & Consecration</div>
+          <p class="value-desc">We pursue a life of purity and consecration — vessels set apart for the Master's use, walking in spirit and in truth.</p>
+        </div>
+        <div class="value-card fade-up delay-1">
+          <span class="value-num">04</span>
+          <div class="value-title">Global Revival</div>
+          <p class="value-desc">The fire of God is not for one city or nation. We are called to spread revival across the nations, igniting hearts everywhere.</p>
+        </div>
+        <div class="value-card fade-up delay-2">
+          <span class="value-num">05</span>
+          <div class="value-title">Raising Vessels</div>
+          <p class="value-desc">We invest in developing Spirit-filled worshippers, intercessors, and ministers who carry God's glory into every sphere of life.</p>
+        </div>
+        <div class="value-card fade-up delay-3">
+          <span class="value-num">06</span>
+          <div class="value-title">Unity of the Body</div>
+          <p class="value-desc">Revival comes when the Body of Christ unites. We gather voices from every stream and tribe around the throne of God.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCRIPTURE FOUNDATIONS -->
+  <section class="scripture-block">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">The Word Behind the Movement</div>
+        <h2 class="section-title">Scripture Foundations</h2>
+      </div>
+      <div class="scripture-list">
+        <div class="scripture fade-up">
+          "God inhabits the praises of His people."
+          <cite>Psalm 22:3</cite>
+        </div>
+        <div class="scripture fade-up delay-1">
+          "Present your bodies as a living sacrifice, holy and acceptable to God, which is your spiritual worship."
+          <cite>Romans 12:1</cite>
+        </div>
+        <div class="scripture fade-up delay-2">
+          "True worshipers will worship the Father in spirit and in truth — these are the worshipers the Father seeks."
+          <cite>John 4:23</cite>
+        </div>
+        <div class="scripture fade-up delay-3">
+          "The earth will be filled with the knowledge of the glory of the Lord, as the waters cover the sea."
+          <cite>Habakkuk 2:14</cite>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERSHIP -->
+  <section class="leadership-section">
+    <div class="container">
+      <div class="fade-up" style="text-align:center;">
+        <div class="section-label">Those Who Lead</div>
+        <h2 class="section-title">Leadership</h2>
+        <p class="section-subtitle" style="margin:0 auto;">Servants raised and marked by His presence to lead this movement.</p>
+      </div>
+      <div class="team-grid" style="margin-top:4rem;">
+        <div class="team-card fade-up">
+          <div class="team-avatar">T</div>
+          <div class="team-name">Founder & Lead</div>
+          <div class="team-role">TEHILLAH MOVEMENT</div>
+        </div>
+        <div class="team-card fade-up delay-1">
+          <div class="team-avatar">W</div>
+          <div class="team-name">Worship Director</div>
+          <div class="team-role">MINISTRY OF WORSHIP</div>
+        </div>
+        <div class="team-card fade-up delay-2">
+          <div class="team-avatar">P</div>
+          <div class="team-name">Prayer & Intercession Lead</div>
+          <div class="team-role">REVIVAL RELEASE</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-mount"></div>
+  <script src="layout.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Watch Live — Tehillah Movement</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="config.js"></script>
+  <script src="youtube-service.js"></script>
+  <style>
+    .media-hero{min-height:55vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:8rem 2rem 4rem;position:relative;overflow:hidden}
+    .media-hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 40%,rgba(201,168,76,.11) 0%,transparent 65%),var(--navy)}
+    .live-badge{display:inline-flex;align-items:center;gap:.6rem;padding:.4rem 1rem;background:rgba(220,50,50,.15);border:1px solid rgba(220,50,50,.4);color:#FF6B6B;font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.2em}
+    .live-dot{width:8px;height:8px;border-radius:50%;background:#FF6B6B;animation:blink 1.2s infinite}
+    .player-frame-yt{width:100%;aspect-ratio:16/9;border:1px solid rgba(201,168,76,.2);background:var(--navy);position:relative;overflow:hidden}
+    .player-frame-yt iframe{position:absolute;inset:0;width:100%;height:100%}
+    .media-tab{padding:1rem 2rem;font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.15em;color:var(--white-dim);cursor:pointer;border-bottom:2px solid transparent;transition:all .3s;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
+    .media-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+    .yt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2rem}
+    .yt-card{border:1px solid rgba(201,168,76,.12);overflow:hidden;cursor:pointer;transition:all .4s}
+    .yt-card:hover{border-color:rgba(201,168,76,.4);transform:translateY(-4px)}
+    .yt-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--navy-light)}
+    .yt-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s;display:block}
+    .yt-card:hover .yt-thumb img{transform:scale(1.04)}
+    .yt-overlay{position:absolute;inset:0;background:rgba(6,9,26,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s}
+    .yt-card:hover .yt-overlay{opacity:1}
+    .yt-play{width:52px;height:52px;border-radius:50%;background:rgba(201,168,76,.9);display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:var(--navy);padding-left:3px}
+    .yt-live-badge{position:absolute;top:.5rem;left:.5rem;background:rgba(220,50,50,.9);color:#fff;font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.12em;padding:.2rem .5rem}
+    .yt-dur{position:absolute;bottom:.5rem;right:.5rem;background:rgba(0,0,0,.8);color:var(--white-dim);font-family:'Cinzel',serif;font-size:.62rem;padding:.15rem .4rem}
+    .yt-info{padding:1.2rem}
+    .yt-cat{font-family:'Cinzel',serif;font-size:.55rem;letter-spacing:.2em;color:var(--gold);margin-bottom:.4rem}
+    .yt-title{font-family:'Cinzel',serif;font-size:.88rem;color:var(--white);margin-bottom:.4rem;line-height:1.4}
+    .yt-meta{font-size:.75rem;color:var(--white-dim)}
+    .skel{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+    .ch-bar{display:flex;align-items:center;gap:1.5rem;padding:1.2rem 1.5rem;background:rgba(201,168,76,.04);border:1px solid rgba(201,168,76,.12);border-radius:6px;margin-top:1.5rem;flex-wrap:wrap}
+    .ch-stat-num{font-family:'Cinzel',serif;font-size:1.1rem;color:var(--gold);display:block}
+    .ch-stat-lbl{font-size:.6rem;color:var(--white-dim);letter-spacing:.08em}
+    .sub-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.3rem;background:#FF0000;color:#fff;font-family:'Cinzel',serif;font-size:.62rem;letter-spacing:.1em;text-decoration:none;transition:opacity .2s;margin-left:auto;flex-shrink:0}
+    .sub-btn:hover{opacity:.85}
+    .pod-row{display:grid;grid-template-columns:48px 1fr 40px;gap:1rem;align-items:center;padding:1.1rem 0;border-bottom:1px solid rgba(201,168,76,.08);cursor:pointer;transition:all .2s}
+    .pod-row:hover{padding-left:.5rem;background:rgba(201,168,76,.03)}
+    @media(max-width:1024px){.yt-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.yt-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<section class="media-hero">
+  <div class="media-hero-bg"></div>
+  <div class="hero-particles"></div>
+  <div style="position:relative;z-index:2;" class="fade-up">
+    <div class="section-label">Media Center</div>
+    <h1 style="font-family:'Cinzel',serif;font-size:clamp(2.5rem,6vw,5rem);">Watch <span class="gold">Live</span> &amp; Media</h1>
+    <p class="section-subtitle" style="margin:1rem auto 0;font-family:'Cormorant Garamond',serif;font-style:italic;">Encounter His presence from wherever you are in the world.</p>
+  </div>
+</section>
+
+<!-- LIVE PLAYER -->
+<section style="padding:4rem;background:var(--navy-mid);">
+  <div class="container">
+    <div id="liveStatus" style="text-align:center;margin-bottom:1.2rem;min-height:32px;"></div>
+    <div id="liveWrap" style="max-width:900px;margin:0 auto;">
+      <div class="player-frame-yt skel" style="aspect-ratio:16/9;"></div>
+    </div>
+    <div id="chBar" class="ch-bar" style="display:none;max-width:900px;margin:1.5rem auto 0;">
+      <img id="chImg" src="" style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(201,168,76,.3);display:none;" alt=""/>
+      <div><div id="chName" style="font-family:'Cinzel',serif;font-size:.9rem;color:var(--white);">Tehillah Movement</div><div style="font-size:.72rem;color:var(--white-dim);">YouTube Channel</div></div>
+      <div style="text-align:center;"><span class="ch-stat-num" id="chSubs">—</span><span class="ch-stat-lbl">SUBS</span></div>
+      <div style="text-align:center;"><span class="ch-stat-num" id="chVids">—</span><span class="ch-stat-lbl">VIDEOS</span></div>
+      <div style="text-align:center;"><span class="ch-stat-num" id="chViews">—</span><span class="ch-stat-lbl">VIEWS</span></div>
+      <a id="chLink" href="#" target="_blank" class="sub-btn">▶ Subscribe</a>
+    </div>
+  </div>
+</section>
+
+<!-- MEDIA LIBRARY -->
+<section style="padding:5rem 4rem;background:var(--navy);">
+  <div class="container">
+    <div class="fade-up"><div class="section-label">On Demand</div><h2 class="section-title">Media Library</h2></div>
+    <div style="display:flex;border-bottom:1px solid rgba(201,168,76,.15);margin-bottom:2rem;overflow-x:auto;" class="fade-up">
+      <button class="media-tab active" onclick="switchTab(this,'latest')">Latest</button>
+      <button class="media-tab" onclick="switchTab(this,'worship')">Worship Moments</button>
+      <button class="media-tab" onclick="switchTab(this,'messages')">Messages</button>
+      <button class="media-tab" onclick="switchTab(this,'testimonies')">Testimonies</button>
+      <button class="media-tab" onclick="switchTab(this,'glory')">Glory Encounter</button>
+    </div>
+    <div style="display:flex;gap:1rem;margin-bottom:2rem;flex-wrap:wrap;" class="fade-up">
+      <div style="display:flex;align-items:center;gap:.5rem;background:rgba(255,255,255,.04);border:1px solid rgba(201,168,76,.2);padding:.5rem 1rem;flex:1;max-width:360px;">
+        <span style="color:var(--white-dim);">🔍</span>
+        <input type="text" id="ytSearch" placeholder="Search videos…" style="background:none;border:none;color:var(--white);outline:none;font-size:.85rem;width:100%;" oninput="debounceSearch(this.value)"/>
+      </div>
+    </div>
+    <div class="yt-grid" id="videoGrid">
+      <div class="yt-card"><div class="yt-thumb skel" style="aspect-ratio:16/9;"></div><div class="yt-info"><div class="skel" style="height:10px;width:40%;margin-bottom:.6rem;"></div><div class="skel" style="height:14px;width:90%;margin-bottom:.4rem;"></div><div class="skel" style="height:10px;width:55%;"></div></div></div>
+      <div class="yt-card"><div class="yt-thumb skel" style="aspect-ratio:16/9;"></div><div class="yt-info"><div class="skel" style="height:10px;width:40%;margin-bottom:.6rem;"></div><div class="skel" style="height:14px;width:90%;margin-bottom:.4rem;"></div><div class="skel" style="height:10px;width:55%;"></div></div></div>
+      <div class="yt-card"><div class="yt-thumb skel" style="aspect-ratio:16/9;"></div><div class="yt-info"><div class="skel" style="height:10px;width:40%;margin-bottom:.6rem;"></div><div class="skel" style="height:14px;width:90%;margin-bottom:.4rem;"></div><div class="skel" style="height:10px;width:55%;"></div></div></div>
+    </div>
+    <div style="text-align:center;margin-top:2.5rem;" id="ytMoreWrap" style="display:none;">
+      <a id="ytMoreLink" href="#" target="_blank" class="btn-secondary">View All on YouTube →</a>
+    </div>
+  </div>
+</section>
+
+<!-- PODCAST -->
+<section style="padding:5rem 4rem;background:var(--navy-mid);">
+  <div class="container">
+    <div class="fade-up"><div class="section-label">Audio</div><h2 class="section-title">Tehillah Podcast</h2><p class="section-subtitle">Revival conversations and worship teachings — wherever you go.</p></div>
+    <div id="podList" style="margin-top:2.5rem;"></div>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem;" class="fade-up">
+      <a href="#" class="btn-secondary">Listen on Spotify</a>
+      <a href="#" class="btn-secondary">Apple Podcasts</a>
+    </div>
+  </div>
+</section>
+
+<div id="footer-mount"></div>
+<script src="layout.js"></script>
+<script src="main.js"></script>
+<script>
+const YT  = YT_SERVICE;
+const CID = TEHILLAH_CONFIG.youtube.channelId;
+const PL  = TEHILLAH_CONFIG.youtube.playlists;
+let   currentTab = 'latest';
+let   searchTimer;
+
+function makeCard(v, cat) {
+  return `
+    <div class="yt-card fade-up" onclick="YT.openVideo('${v.id}','${(v.title||'').replace(/'/g,"\\'")}')">
+      <div class="yt-thumb">
+        <img src="${v.thumbnail||''}" alt="${(v.title||'').replace(/"/g,'&quot;')}" loading="lazy"/>
+        <div class="yt-overlay"><div class="yt-play">▶</div></div>
+        ${v.isLive?'<div class="yt-live-badge">🔴 LIVE</div>':''}
+        ${v.duration?`<div class="yt-dur">${v.duration}</div>`:''}
+      </div>
+      <div class="yt-info">
+        <div class="yt-cat">${cat||'TEHILLAH'} · ${v.publishedAgo||''}</div>
+        <div class="yt-title">${v.title||''}</div>
+        <div class="yt-meta">👁 ${v.views||0} views</div>
+      </div>
+    </div>`;
+}
+
+function showSkels(n=6) {
+  document.getElementById('videoGrid').innerHTML = Array(n).fill(`
+    <div class="yt-card">
+      <div class="yt-thumb skel" style="aspect-ratio:16/9;"></div>
+      <div class="yt-info">
+        <div class="skel" style="height:10px;width:40%;margin-bottom:.6rem;"></div>
+        <div class="skel" style="height:14px;width:90%;margin-bottom:.4rem;"></div>
+        <div class="skel" style="height:10px;width:55%;"></div>
+      </div>
+    </div>`).join('');
+}
+
+async function loadVideos(tab) {
+  showSkels();
+  const grid = document.getElementById('videoGrid');
+  const catMap = { latest:'LATEST', worship:'WORSHIP MOMENT', messages:'MESSAGE', testimonies:'TESTIMONY', glory:'GLORY ENCOUNTER' };
+  const cat = catMap[tab] || 'TEHILLAH';
+  try {
+    let videos = [];
+    if (tab === 'worship'     && PL.worship)        videos = await YT.getPlaylistVideos(PL.worship, 9);
+    else if (tab === 'messages'    && PL.messages)   videos = await YT.getPlaylistVideos(PL.messages, 9);
+    else if (tab === 'testimonies' && PL.testimonies) videos = await YT.getPlaylistVideos(PL.testimonies, 9);
+    else if (tab === 'glory'       && PL.gloryEncounter) videos = await YT.getPlaylistVideos(PL.gloryEncounter, 9);
+    else videos = await YT.getLatestVideos(9);
+
+    if (!videos.length) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--white-dim);">No videos found. <a href="https://youtube.com/channel/${CID}" target="_blank" style="color:var(--gold);">Visit YouTube →</a></div>`;
+      return;
+    }
+    grid.innerHTML = videos.map(v => makeCard(v, cat)).join('');
+    document.getElementById('ytMoreLink').href = `https://www.youtube.com/channel/${CID}`;
+    document.getElementById('ytMoreWrap').style.display = 'block';
+    setTimeout(() => grid.querySelectorAll('.fade-up').forEach(el => el.classList.add('visible')), 50);
+  } catch(e) {
+    grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--white-dim);">
+      <div style="font-size:2rem;margin-bottom:1rem;opacity:.25;">▶</div>
+      <div style="font-family:'Cinzel',serif;color:var(--white);margin-bottom:.5rem;">Add Your YouTube API Key</div>
+      <p style="margin-bottom:1rem;">Open <strong>config.js</strong> and set your <code style="color:var(--gold);">youtube.apiKey</code> and <code style="color:var(--gold);">youtube.channelId</code>.</p>
+      <a href="https://www.youtube.com/channel/${CID}" target="_blank" class="btn-secondary" style="display:inline-block;padding:.7rem 1.5rem;font-size:.65rem;">Visit YouTube Channel →</a>
+    </div>`;
+  }
+}
+
+async function loadLive() {
+  const wrap   = document.getElementById('liveWrap');
+  const status = document.getElementById('liveStatus');
+  try {
+    const live = await YT.getLiveStream();
+    if (live) {
+      status.innerHTML = `<div class="live-badge"><span class="live-dot"></span>&nbsp;LIVE NOW — ${live.title}</div>`;
+      wrap.innerHTML   = `<div class="player-frame-yt"><iframe src="${live.embedUrl}" frameborder="0" allowfullscreen allow="autoplay;encrypted-media"></iframe></div>
+        <p style="text-align:center;color:var(--white-dim);font-size:.85rem;margin-top:1rem;">Also on <a href="${live.watchUrl}" target="_blank" style="color:var(--gold);">YouTube →</a></p>`;
+    } else {
+      const latest = await YT.getLatestVideos(1);
+      const v = latest[0];
+      status.innerHTML = `<div style="font-family:'Cinzel',serif;font-size:.68rem;letter-spacing:.2em;color:var(--white-dim);">NOT LIVE · LATEST UPLOAD${v?' — '+v.publishedAgo:''}</div>`;
+      if (v) {
+        wrap.innerHTML = `<div class="player-frame-yt"><iframe src="${v.embedUrl}" frameborder="0" allowfullscreen allow="encrypted-media"></iframe></div>
+          <p style="text-align:center;color:var(--white-dim);font-size:.85rem;margin-top:1rem;"><a href="https://www.youtube.com/channel/${CID}" target="_blank" style="color:var(--gold);">Subscribe on YouTube →</a></p>`;
+      } else {
+        wrap.innerHTML = `<div class="player-frame-yt" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;min-height:300px;">
+          <div style="font-family:'Cinzel',serif;font-size:.8rem;color:var(--white-dim);letter-spacing:.15em;">SET UP YOUR YOUTUBE API KEY IN CONFIG.JS</div>
+          <a href="https://www.youtube.com/channel/${CID}" target="_blank" class="btn-secondary" style="display:inline-block;padding:.7rem 1.5rem;font-size:.65rem;">Visit Channel</a>
+        </div>`;
+      }
+    }
+  } catch(e) {
+    wrap.innerHTML = `<div class="player-frame-yt" style="display:flex;align-items:center;justify-content:center;min-height:200px;color:var(--white-dim);font-size:.85rem;">Configure YouTube API key in config.js to load the live player.</div>`;
+    status.innerHTML = '';
+  }
+}
+
+async function loadChannelInfo() {
+  try {
+    const ch = await YT.getChannelInfo();
+    if (!ch) return;
+    const bar = document.getElementById('chBar');
+    bar.style.display = 'flex';
+    if (ch.thumbnail) { const img=document.getElementById('chImg'); img.src=ch.thumbnail; img.style.display='block'; }
+    document.getElementById('chName').textContent  = ch.name;
+    document.getElementById('chSubs').textContent  = YT._formatCount(ch.subscribers);
+    document.getElementById('chVids').textContent  = ch.videoCount;
+    document.getElementById('chViews').textContent = YT._formatCount(ch.viewCount);
+    document.getElementById('chLink').href         = ch.url;
+  } catch(e) {}
+}
+
+function switchTab(btn, tab) {
+  document.querySelectorAll('.media-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = tab;
+  loadVideos(tab);
+}
+
+function debounceSearch(val) {
+  clearTimeout(searchTimer);
+  if (!val.trim()) { loadVideos(currentTab); return; }
+  searchTimer = setTimeout(async () => {
+    showSkels(6);
+    const grid = document.getElementById('videoGrid');
+    try {
+      const videos = await YT.searchVideos(val, 9);
+      grid.innerHTML = videos.length
+        ? videos.map(v => makeCard(v,'SEARCH RESULT')).join('')
+        : `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--white-dim);">No results for "${val}"</div>`;
+    } catch(e) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--white-dim);">Search unavailable.</div>`;
+    }
+  }, 600);
+}
+
+function loadPodcasts() {
+  const pods = [
+    { num:'01', title:'What Does It Mean to Host His Presence?',       meta:'Season 1 · Ep 1 · 48 min' },
+    { num:'02', title:'The Davidic Order — 24/7 Worship Explained',    meta:'Season 1 · Ep 2 · 55 min' },
+    { num:'03', title:'Holiness and the Manifest Presence of God',     meta:'Season 1 · Ep 3 · 61 min' },
+    { num:'04', title:'Revival Fire — What the Nations Are Waiting For',meta:'Season 1 · Ep 4 · 52 min' },
+  ];
+  document.getElementById('podList').innerHTML = pods.map(p => `
+    <div class="pod-row fade-up" onclick="alert('Opening: ${p.title}')">
+      <div style="font-family:'Cinzel',serif;font-size:1.4rem;color:rgba(201,168,76,.2);text-align:center;">${p.num}</div>
+      <div><div style="font-family:'Cinzel',serif;font-size:.88rem;color:var(--white);margin-bottom:.2rem;">${p.title}</div><div style="font-size:.75rem;color:var(--white-dim);">${p.meta}</div></div>
+      <div style="width:36px;height:36px;border:1px solid rgba(201,168,76,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-size:.9rem;">▶</div>
+    </div>`).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadLive();
+  loadChannelInfo();
+  loadVideos('latest');
+  loadPodcasts();
+});
+</script>
+</body>
+</html>
